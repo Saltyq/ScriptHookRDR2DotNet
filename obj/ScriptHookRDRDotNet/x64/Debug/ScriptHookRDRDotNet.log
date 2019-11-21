@@ -1,6 +1,0 @@
-﻿source\core\NativeMemory.cs(1331,5): warning CS0162: Unreachable code detected
-  DllMain.cpp
-  .NETFramework,Version=v4.8.AssemblyAttributes.cpp
-  Generating code
-  Finished generating code
-  ScriptHookRDRDotNet.vcxproj -> D:\VS Projects\scripthookvdotnet-master\bin\Debug\ScriptHookRDRDotNet.asi

@@ -26,8 +26,8 @@ namespace RDR2DN
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <returns>Internal texture ID.</returns>
-		[DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?createTexture@@YAHPEBD@Z")]
-		public static extern int CreateTexture([MarshalAs(UnmanagedType.LPStr)] string filename);
+		//[DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?createTexture@@YAHPEBD@Z")]
+		//public static extern int CreateTexture([MarshalAs(UnmanagedType.LPStr)] string filename);
 
 		/// <summary>
 		/// Draws a texture on screen. Can be called only in the same thread as natives.
@@ -48,8 +48,8 @@ namespace RDR2DN
 		/// <param name="colorG">Green tint.</param>
 		/// <param name="colorB">Blue tint.</param>
 		/// <param name="colorA">Alpha value.</param>
-		[DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?drawTexture@@YAXHHHHMMMMMMMMMMMM@Z")]
-		public static extern void DrawTexture(int id, int instance, int level, int time, float sizeX, float sizeY, float centerX, float centerY, float posX, float posY, float rotation, float scaleFactor, float colorR, float colorG, float colorB, float colorA);
+		//[DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?drawTexture@@YAXHHHHMMMMMMMMMMMM@Z")]
+		//public static extern void DrawTexture(int id, int instance, int level, int time, float sizeX, float sizeY, float centerX, float centerY, float posX, float posY, float rotation, float scaleFactor, float colorR, float colorG, float colorB, float colorA);
 
 		/// <summary>
 		/// Gets the game version enumeration value as specified by ScriptHookRDR2.
@@ -64,15 +64,32 @@ namespace RDR2DN
 		/// <returns>Pointer to the variable, or <see cref="IntPtr.Zero"/> if it does not exist.</returns>
 		[DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?getGlobalPtr@@YAPEA_KH@Z")]
 		public static extern IntPtr GetGlobalPtr(int index);
-		#endregion
 
-		/// <summary>
-		/// Searches the address space of the current process for a memory pattern.
-		/// </summary>
-		/// <param name="pattern">The pattern.</param>
-		/// <param name="mask">The pattern mask.</param>
-		/// <returns>The address of a region matching the pattern or <c>null</c> if none was found.</returns>
-		static unsafe byte* FindPattern(string pattern, string mask)
+        [DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?getScriptHandleBaseAddress@@YAPEAEH@Z")]
+        static extern IntPtr _GetScriptHandleBaseAddress(int handle);
+
+        // Pools
+        [DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?worldGetAllObjects@@YAHPEAHH@Z")]
+        public static extern int getAllObjects(int[] arr, int arrSize);
+
+        [DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?worldGetAllPeds@@YAHPEAHH@Z")]
+        public static extern int getAllPeds(int[] arr, int arrSize);
+
+        [DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?worldGetAllPickups@@YAHPEAHH@Z")]
+        public static extern int getAllPickups(int[] arr, int arrSize);
+
+        [DllImport("ScriptHookRDR2.dll", ExactSpelling = true, EntryPoint = "?worldGetAllVehicles@@YAHPEAHH@Z")]
+        public static extern int getAllVehicles(int[] arr, int arrSize);
+
+        #endregion
+
+        /// <summary>
+        /// Searches the address space of the current process for a memory pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        /// <param name="mask">The pattern mask.</param>
+        /// <returns>The address of a region matching the pattern or <c>null</c> if none was found.</returns>
+        static unsafe byte* FindPattern(string pattern, string mask)
 		{
 			ProcessModule module = Process.GetCurrentProcess().MainModule;
 

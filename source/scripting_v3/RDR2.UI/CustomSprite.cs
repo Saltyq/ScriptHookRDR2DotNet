@@ -63,7 +63,7 @@ namespace RDR2.UI
 		/// <exception cref="FileNotFoundException">Thrown if the specified file doesn't exist</exception>
 		public CustomSprite(string filename, SizeF size, PointF position, Color color, float rotation, bool centered)
 		{
-			if (!File.Exists(filename))
+			/*if (!File.Exists(filename))
 			{
 				throw new FileNotFoundException(filename);
 			}
@@ -92,7 +92,7 @@ namespace RDR2.UI
 			Position = position;
 			Color = color;
 			Rotation = rotation;
-			Centered = centered;
+			Centered = centered;*/
 		}
 
 		#region Fields
@@ -204,7 +204,7 @@ namespace RDR2.UI
 
 		void InternalDraw(SizeF offset, float screenWidth, float screenHeight)
 		{
-			if (!Enabled)
+			/*if (!Enabled)
 			{
 				return;
 			}
@@ -234,7 +234,7 @@ namespace RDR2.UI
 				positionY += scaleY * 0.5f;
 			}
 
-			RDR2DN.NativeMemory.DrawTexture(_id, _indexes[_id]++, _globalLevel++, 100, scaleX, scaleY / aspectRatio, 0.5f, 0.5f, positionX, positionY, Rotation * 0.00277777778f, aspectRatio, Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f);
+			RDR2DN.NativeMemory.DrawTexture(_id, _indexes[_id]++, _globalLevel++, 100, scaleX, scaleY / aspectRatio, 0.5f, 0.5f, positionX, positionY, Rotation * 0.00277777778f, aspectRatio, Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f);*/
 		}
 	}
 }

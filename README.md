@@ -9,6 +9,7 @@ The issues page should be primarily used for bug reports and enhancement ideas. 
 
 ## Known Issues
 * Returning pointers causes crash.
+* (sometimes) Passing strings through native causes crash (conversion from const char** pointer to string)
 
 ## Requirements
 

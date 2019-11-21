@@ -1,6 +1,7 @@
 Community Script Hook RDR2 .NET
 ============================
-** THIS IS A PRE RELEASE BUILD, USE HOW YOU WANT TO! EXPECT ERRORS, CRASHES, ETC **
+
+**THIS IS A PRE RELEASE BUILD, USE HOW YOU WANT TO! EXPECT ERRORS, CRASHES, ETC**
 
 This is an ASI plugin for Red Dead Redemption 2, ported from [**ScriptHookVDotNet**](https://github.com/crosire/scripthookvdotnet/), based on the C++ ScriptHook by Alexander Blade, which allows running scripts written in any .NET language in-game.
 

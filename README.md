@@ -1,9 +1,13 @@
 Community Script Hook RDR2 .NET
 ============================
+*** THIS IS A PRE RELEASE BUILD, USE HOW YOU WANT TO! EXPECT ERRORS, CRASHES, ETC ***
 
 This is an ASI plugin for Red Dead Redemption 2, ported from [**ScriptHookVDotNet**](https://github.com/crosire/scripthookvdotnet/), based on the C++ ScriptHook by Alexander Blade, which allows running scripts written in any .NET language in-game.
 
 The issues page should be primarily used for bug reports and enhancement ideas. Questions related to RDR2 scripting in general are better off in forums dedicated to this purpose, like [NexusMods](https://www.nexusmods.com/reddeadredemption2) or [gtaforums.com](https://gtaforums.com/forum/459-modding/).
+
+## Known Issues
+* Returning pointers causes crash.
 
 ## Requirements
 

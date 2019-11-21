@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <ProjectGuid>{D68E6CB7-FC70-41C9-BD53-D79552B37F0E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RDR2</RootNamespace>
+    <AssemblyName>ScriptHookRDRNetAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\obj\ScriptHookVDotNet3\</BaseIntermediateOutputPath>
+    <DocumentationFile>..\..\bin\Debug\ScriptHookRDRNetAPI.xml</DocumentationFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>false</Optimize>
+    <NoWarn>1591</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\obj\ScriptHookVDotNet3\</BaseIntermediateOutputPath>
+    <DocumentationFile>..\..\bin\Release\ScriptHookRDRNetAPI.xml</DocumentationFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <NoWarn>1591</NoWarn>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ScriptHookRDRDotNet, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8564999cffc18483, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\bin\Debug\ScriptHookRDRDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="RDR2.Math\Matrix.cs" />
+    <Compile Include="RDR2.Math\Quaternion.cs" />
+    <Compile Include="RDR2.Math\Vector2.cs" />
+    <Compile Include="RDR2.Math\Vector3.cs" />
+    <Compile Include="RDR2.Native\Native.cs" />
+    <Compile Include="RDR2.Native\NativeHashes.cs" />
+    <Compile Include="RDR2.NaturalMotion\Euphoria.cs" />
+    <Compile Include="RDR2.NaturalMotion\EuphoriaBase.cs" />
+    <Compile Include="RDR2.NaturalMotion\EuphoriaHelpers.cs" />
+    <Compile Include="RDR2.UI\Alignment.cs" />
+    <Compile Include="RDR2.UI\ContainerElement.cs" />
+    <Compile Include="RDR2.UI\CursorSprite.cs" />
+    <Compile Include="RDR2.UI\CustomSprite.cs" />
+    <Compile Include="RDR2.UI\Font.cs" />
+    <Compile Include="RDR2.UI\Hud.cs" />
+    <Compile Include="RDR2.UI\HudComponent.cs" />
+    <Compile Include="RDR2.UI\IElement.cs" />
+    <Compile Include="RDR2.UI\ISpriteElement.cs" />
+    <Compile Include="RDR2.UI\LoadingPrompt.cs" />
+    <Compile Include="RDR2.UI\LoadingSpinnerType.cs" />
+    <Compile Include="RDR2.UI\Notification.cs" />
+    <Compile Include="RDR2.UI\NotificationIcon.cs" />
+    <Compile Include="RDR2.UI\Screen.cs" />
+    <Compile Include="RDR2.UI\ScreenEffects.cs" />
+    <Compile Include="RDR2.UI\Sprite.cs" />
+    <Compile Include="RDR2.UI\TextElement.cs" />
+    <Compile Include="RDR2\Audio.cs" />
+    <Compile Include="RDR2\AudioFlag.cs" />
+    <Compile Include="RDR2\Blip.cs" />
+    <Compile Include="RDR2\BlipColor.cs" />
+    <Compile Include="RDR2\BlipSprite.cs" />
+    <Compile Include="RDR2\Camera.cs" />
+    <Compile Include="RDR2\CameraShake.cs" />
+    <Compile Include="RDR2\Control.cs" />
+    <Compile Include="RDR2\Entities\Entity.cs" />
+    <Compile Include="RDR2\Entities\EntityType.cs" />
+    <Compile Include="RDR2\Entities\Model.cs" />
+    <Compile Include="RDR2\Entities\Peds\AnimationFlags.cs" />
+    <Compile Include="RDR2\Entities\Peds\Bone.cs" />
+    <Compile Include="RDR2\Entities\Peds\DrivingStyle.cs" />
+    <Compile Include="RDR2\Entities\Peds\FiringPattern.cs" />
+    <Compile Include="RDR2\Entities\Peds\FormationType.cs" />
+    <Compile Include="RDR2\Entities\Peds\Gender.cs" />
+    <Compile Include="RDR2\Entities\Peds\LeaveVehicleFlags.cs" />
+    <Compile Include="RDR2\Entities\Peds\Ped.cs" />
+    <Compile Include="RDR2\Entities\Peds\PedGroup.cs" />
+    <Compile Include="RDR2\Entities\Peds\PedHash.cs" />
+    <Compile Include="RDR2\Entities\Peds\Relationship.cs" />
+    <Compile Include="RDR2\Entities\Peds\RelationshipGroup.cs" />
+    <Compile Include="RDR2\Entities\Peds\Tasks.cs" />
+    <Compile Include="RDR2\Entities\Peds\TaskSequence.cs" />
+    <Compile Include="RDR2\Entities\Prop.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\Vehicle.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleClass.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleColor.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleDoor.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleHash.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleLockStatus.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleMod.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleNeonLight.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleRoofState.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleSeat.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleToggleMod.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleWheelType.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleWindow.cs" />
+    <Compile Include="RDR2\Entities\Vehicles\VehicleWindowTint.cs" />
+    <Compile Include="RDR2\ExplosionType.cs" />
+    <Compile Include="RDR2\ForceType.cs" />
+    <Compile Include="RDR2\Game.cs" />
+    <Compile Include="RDR2\GameplayCamera.cs" />
+    <Compile Include="RDR2\GameVersion.cs" />
+    <Compile Include="RDR2\Global.cs" />
+    <Compile Include="RDR2\GlobalCollection.cs" />
+    <Compile Include="RDR2\Handleable.cs" />
+    <Compile Include="RDR2\Language.cs" />
+    <Compile Include="RDR2\MarkerType.cs" />
+    <Compile Include="RDR2\Pickup.cs" />
+    <Compile Include="RDR2\PickupType.cs" />
+    <Compile Include="RDR2\Player.cs" />
+    <Compile Include="RDR2\PoolObject.cs" />
+    <Compile Include="RDR2\RaycastResult.cs" />
+    <Compile Include="RDR2\RequireScript.cs" />
+    <Compile Include="RDR2\Rope.cs" />
+    <Compile Include="RDR2\RopeType.cs" />
+    <Compile Include="RDR2\Scaleform.cs" />
+    <Compile Include="RDR2\ScaleformArgumentTXD.cs" />
+    <Compile Include="RDR2\Script.cs" />
+    <Compile Include="RDR2\ScriptSettings.cs" />
+    <Compile Include="RDR2\Weapons\DlcWeaponData.cs" />
+    <Compile Include="RDR2\Weapons\Weapon.cs" />
+    <Compile Include="RDR2\Weapons\WeaponAsset.cs" />
+    <Compile Include="RDR2\Weapons\WeaponCollection.cs" />
+    <Compile Include="RDR2\Weapons\WeaponComponent.cs" />
+    <Compile Include="RDR2\Weapons\WeaponGroup.cs" />
+    <Compile Include="RDR2\Weapons\WeaponHash.cs" />
+    <Compile Include="RDR2\Weapons\WeaponTint.cs" />
+    <Compile Include="RDR2\Weather.cs" />
+    <Compile Include="RDR2\WindowTitle.cs" />
+    <Compile Include="RDR2\World.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

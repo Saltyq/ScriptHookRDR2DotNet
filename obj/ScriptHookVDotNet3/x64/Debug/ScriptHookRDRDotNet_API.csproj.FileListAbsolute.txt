@@ -1,0 +1,7 @@
+D:\VS Projects\scripthookvdotnet-master\bin\Debug\ScriptHookRDRNetAPI.xml
+D:\VS Projects\scripthookvdotnet-master\bin\Debug\ScriptHookRDRNetAPI.dll
+D:\VS Projects\scripthookvdotnet-master\bin\Debug\ScriptHookRDRNetAPI.pdb
+D:\VS Projects\scripthookvdotnet-master\obj\ScriptHookVDotNet3\x64\Debug\ScriptHookRDRDotNet_API.csprojAssemblyReference.cache
+D:\VS Projects\scripthookvdotnet-master\obj\ScriptHookVDotNet3\x64\Debug\ScriptHookRDRDotNet_API.csproj.CopyComplete
+D:\VS Projects\scripthookvdotnet-master\obj\ScriptHookVDotNet3\x64\Debug\ScriptHookRDRNetAPI.dll
+D:\VS Projects\scripthookvdotnet-master\obj\ScriptHookVDotNet3\x64\Debug\ScriptHookRDRNetAPI.pdb

@@ -35,5 +35,6 @@ All the source code except for the Vector, Matrix and Quaternion classes, which 
 
 
 ### Credits
-Crosire (ScriptHookVDotNet)
-Jedijosh920 - lots of help, natives for methods
+* Crosire (ScriptHookVDotNet)
+
+* Jedijosh920 - lots of help, natives for methods

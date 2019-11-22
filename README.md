@@ -34,6 +34,6 @@ Any contributions to the project are welcomed, it's recommended to use GitHub [p
 All the source code except for the Vector, Matrix and Quaternion classes, which are licensed separately, is licensed under the conditions of the [zlib license](LICENSE.txt).
 
 
-# Credits
+### Credits
 Crosire (ScriptHookVDotNet)
 Jedijosh920 - lots of help, natives for methods

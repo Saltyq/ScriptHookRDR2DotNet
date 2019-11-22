@@ -81,7 +81,7 @@ namespace RDR2DN
 				try
 				{
 					scriptApis.Add(Assembly.LoadFrom(apiPath));
-                    Log.Message(Log.Level.Debug, "API from ", apiPath, " added to scriptApis", " ...");
+                    Log.Message(Log.Level.Debug, "API from ", apiPath, " loaded", " ...");
 
                 }
                 catch (Exception ex)
@@ -136,19 +136,22 @@ namespace RDR2DN
         /// <returns>The script domain or <c>null</c> in case of failure.</returns>
         public static ScriptDomain Load(string basePath, string scriptPath)
 		{
+            string _scriptPath;
             // Make absolute path to scrips location
-            if (!Path.IsPathRooted(scriptPath))
-                scriptPath = Path.Combine(Path.GetDirectoryName(basePath), scriptPath);
-            scriptPath = Path.GetFullPath(scriptPath);
+            //if (!Path.IsPathRooted(scriptPath))
+            _scriptPath = Path.GetFullPath(Path.Combine(basePath, scriptPath));
 
             // Create application and script domain for all the scripts to reside in
-            var name = "ScriptDomain_" + (scriptPath.GetHashCode() ^ Environment.TickCount).ToString("X");
+            var name = "ScriptDomain_" + (_scriptPath.GetHashCode() ^ Environment.TickCount).ToString("X");
             var setup = new AppDomainSetup();
-            setup.ApplicationBase = scriptPath;
+            setup.ApplicationBase = _scriptPath;
             setup.ShadowCopyFiles = "true"; // Copy assemblies into memory rather than locking the file, so they can be updated while the domain is still loaded
-            setup.ShadowCopyDirectories = scriptPath; // Only shadow copy files in the scripts directory
+            setup.ShadowCopyDirectories = _scriptPath; // Only shadow copy files in the scripts directory
 
             var appdomain = AppDomain.CreateDomain(name, null, setup, new System.Security.PermissionSet(System.Security.Permissions.PermissionState.Unrestricted));
+            appdomain.SetCachePath(Path.GetTempPath());
+            appdomain.SetShadowCopyFiles();
+            appdomain.SetShadowCopyPath(_scriptPath);
             appdomain.InitializeLifetimeService(); // Give the application domain an infinite lifetime
 
             // Need to attach the resolve handler to the current domain too, so that the .NET framework finds this assembly in the ASI file
@@ -160,7 +163,7 @@ namespace RDR2DN
             {
                 scriptdomain = (ScriptDomain)appdomain.CreateInstanceFromAndUnwrap(typeof(ScriptDomain).Assembly.Location, typeof(ScriptDomain).FullName, false, BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] { basePath }, null, null);
 				
-                Log.Message(Log.Level.Debug, "Script domain created: ", "Name: ", name, " FullName: ", typeof(ScriptDomain).FullName, " Assembly Location: ", typeof(ScriptDomain).Assembly.Location);
+                //Log.Message(Log.Level.Debug, "Script domain created: ", "Name: ", name, " FullName: ", typeof(ScriptDomain).FullName, " Assembly Location: ", typeof(ScriptDomain).Assembly.Location);
             }
             catch (Exception ex)
             {
@@ -169,10 +172,8 @@ namespace RDR2DN
             }
 
             // Remove resolve handler again
-            Log.Message(Log.Level.Debug, "Removing resolve handler ...");
             AppDomain.CurrentDomain.AssemblyResolve -= HandleResolve;
             Log.Message(Log.Level.Debug, "Resolve handler removed");
-            Log.Message(Log.Level.Debug, "ScriptDomain: ", scriptdomain.Name, " Scripts Path: ", scriptdomain.ScriptPath);
 
             return scriptdomain;
         }
@@ -793,7 +794,6 @@ namespace RDR2DN
 			// Some scripts were written against old RDR2DN versions where everything was still in the ASI, so make sure those are not caught here
 			if (assemblyName.Name.Equals("ScriptHookRDRDotNet", StringComparison.OrdinalIgnoreCase) && assemblyName.Version >= new Version(0, 0, 0, 0))
 			{
-                Log.Message(Log.Level.Debug, "Main assembly resolve");
 				return typeof(ScriptDomain).Assembly;
 			}
 
@@ -801,7 +801,6 @@ namespace RDR2DN
 			if (CurrentDomain != null && assemblyName.Name.StartsWith("ScriptHookRDRNetAPI", StringComparison.OrdinalIgnoreCase))
 			{
 				var bestVersion = new Version(1, 0, 0, 0); //
-                Log.Message(Log.Level.Debug, "at before bestversion check v", bestVersion.ToString());
 
 
                 // Some scripts reference a version-less RDR2DN, do default those to major version 2
@@ -812,7 +811,6 @@ namespace RDR2DN
 
 					return CurrentDomain.scriptApis.Where(x => x.GetName().Version.Major == 1).FirstOrDefault();
 				}
-                Log.Message(Log.Level.Debug, "best version check completed");
 
                 Assembly compatibleApi = null;
 

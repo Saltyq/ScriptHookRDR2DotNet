@@ -65,10 +65,7 @@ namespace RDR2DN
 				throw new InvalidOperationException("Illegal scripting call outside script domain.");
 			}
 
-			IntPtr strUtf8 = domain.PinString(str);
-            ulong[] conargs = ConvertPrimitiveArguments(new object[] { 10, "LITERAL_STRING" });
-
-            conargs[3] = (ulong)strUtf8.ToInt64();
+            ulong[] conargs = ConvertPrimitiveArguments(new object[] { 10, "LITERAL_STRING", str });
             domain.ExecuteTask(new NativeTask {
 				Hash = 0xFA925AC00EB830B9,
 				Arguments = conargs
@@ -199,7 +196,7 @@ namespace RDR2DN
 				}
 				if (args[i] is string valueString)
 				{
-					result[i] = (ulong)ScriptDomain.CurrentDomain.PinString(valueString).ToInt64();
+					result[i] = (ulong)ScriptDomain.CurrentDomain.PinString(valueString);
 					continue;
 				}
 

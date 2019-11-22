@@ -613,10 +613,11 @@ namespace RDR2DN
 		}
 		static unsafe void DrawText(float x, float y, string text, Color color)
 		{
-			NativeFunc.InvokeInternal(0x4170B650590B3B00  /*SET_TEXT_SCALE*/, 0.35f, 0.35f);
-			NativeFunc.InvokeInternal(0x50A41AD966910F03  /*SET_TEXT_COLOR*/, color.R, color.G, color.B, color.A);
-            var varString = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", text);
-            NativeFunc.InvokeInternal(0xD79334A4BB99BAD1, *varString, x, y);
+			NativeFunc.Invoke(0x4170B650590B3B00  /*SET_TEXT_SCALE*/, 0.35f, 0.35f);
+            NativeFunc.Invoke(0x50A41AD966910F03  /*SET_TEXT_COLOR*/, color.R, color.G, color.B, color.A);
+            var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", text);
+            object varString = (string)NativeMemory.PtrToStringUTF8(new IntPtr((char*)*res));
+            NativeFunc.Invoke(0xD79334A4BB99BAD1, varString, x, y);
 
         }
 

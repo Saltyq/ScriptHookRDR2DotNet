@@ -111,7 +111,7 @@ public:
 internal:
 	static RDR2DN::Console^ console = nullptr;
 	static RDR2DN::ScriptDomain^ domain = RDR2DN::ScriptDomain::CurrentDomain;
-	static WinForms::Keys reloadKey = WinForms::Keys::Insert;
+	static WinForms::Keys reloadKey = WinForms::Keys::None;
 	static WinForms::Keys consoleKey = WinForms::Keys::F4;
 
 	static void SetConsole()
@@ -134,7 +134,7 @@ static void ScriptHookRDRDotNet_ManagedInit()
 	RDR2DN::Log::Clear();
 
 	// Load configuration
-	String^ scriptPath = "\\scripts\\";
+	String^ scriptPath = "scripts";
 
 	try
 	{
@@ -166,25 +166,41 @@ static void ScriptHookRDRDotNet_ManagedInit()
 	}
 
 	// Create a separate script domain
-	try
+	
+	String^ directory = IO::Path::GetDirectoryName(Assembly::GetExecutingAssembly()->Location);
+	domain = RDR2DN::ScriptDomain::Load(directory, scriptPath);
+	if (domain == nullptr)
 	{
-		String^ directory = IO::Path::GetDirectoryName(Assembly::GetExecutingAssembly()->Location);
-		domain = RDR2DN::ScriptDomain::Load(directory, scriptPath);
-		if (domain == nullptr)
-		{
-			RDR2DN::Log::Message(RDR2DN::Log::Level::Error, "return null on scriptdomain::load() in ", scriptPath);
-			return;
-		}
+		RDR2DN::Log::Message(RDR2DN::Log::Level::Error, "return null on scriptdomain::load() in ", scriptPath);
+		return;
+	}
 
-		RDR2DN::Log::Message(RDR2DN::Log::Level::Info, "Starting scripts... ", directory, scriptPath);
 
-		// Start scripts in the newly created domain
-		domain->Start();
+	// Console Stuff -- commented out until internal drawtext is solved
+	/*try
+	{
+		// Instantiate console inside script domain, so that it can access the scripting API
+		console = (RDR2DN::Console^)domain->AppDomain->CreateInstanceFromAndUnwrap(
+			RDR2DN::Console::typeid->Assembly->Location, RDR2DN::Console::typeid->FullName);
+
+		// Print welcome message
+		console->PrintInfo("~c~--- Community Script Hook RDR2 .NET  ---");
+		console->PrintInfo("~c~--- Type \"Help()\" to print an overview of available commands ---");
+
+		// Update console pointer in script domain
+		domain->AppDomain->SetData("Console", console);
+		domain->AppDomain->DoCallBack(gcnew CrossAppDomainDelegate(&ScriptHookRDRDotNet::SetConsole));
+
+		// Add default console commands
+		console->RegisterCommands(ScriptHookRDRDotNet::typeid);
 	}
 	catch (Exception ^ ex)
 	{
-		RDR2DN::Log::Message(RDR2DN::Log::Level::Error, ex->ToString());
-	}
+		RDR2DN::Log::Message(RDR2DN::Log::Level::Error, "Failed to create console: ", ex->ToString());
+	}*/
+
+	// Start scripts in the newly created domain
+	domain->Start();
 }
 
 static void ScriptHookRDRDotNet_ManagedTick()

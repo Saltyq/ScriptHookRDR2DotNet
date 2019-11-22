@@ -638,16 +638,21 @@ namespace RDR2DN
 		/// <returns>A pointer to the pinned memory containing the string.</returns>
 		public IntPtr PinString(string str)
 		{
-			IntPtr handle = NativeMemory.StringToCoTaskMemUTF8(str);
+			IntPtr handle = RDR2DN.NativeMemory.StringToCoTaskMemUTF8(str);
 
-			if (handle == IntPtr.Zero)
+            if (handle == IntPtr.Zero)
 			{
-				return NativeMemory.NullString;
+
+                return NativeMemory.NullString;
 			}
 			else
 			{
-				pinnedStrings.Add(handle);
-				return handle;
+                if (pinnedStrings.Contains(handle))
+                {
+                    pinnedStrings.Add(handle);
+                }
+
+                return handle;
 			}
 		}
 

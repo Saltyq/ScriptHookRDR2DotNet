@@ -21,7 +21,7 @@ namespace RDR2.UI
 		/// <param name="position">Set the <see cref="Position"/> on screen where to draw the <see cref="TextElement"/>.</param>
 		/// <param name="scale">Sets a <see cref="Scale"/> used to increase of decrease the size of the <see cref="TextElement"/>, for no scaling use 1.0f.</param>
 		public TextElement(string caption, PointF position, float scale) :
-			this(caption, position, scale, Color.WhiteSmoke, Font.ChaletLondon, Alignment.Left, false, false, 0.0f)
+			this(caption, position, scale, Color.WhiteSmoke, Alignment.Left, false, false, 0.0f)
 		{
 		}
 		/// <summary>
@@ -32,9 +32,10 @@ namespace RDR2.UI
 		/// <param name="scale">Sets a <see cref="Scale"/> used to increase of decrease the size of the <see cref="TextElement"/>, for no scaling use 1.0f.</param>
 		/// <param name="color">Set the <see cref="Color"/> used to draw the <see cref="TextElement"/>.</param>
 		public TextElement(string caption, PointF position, float scale, Color color) :
-			this(caption, position, scale, color, Font.ChaletLondon, Alignment.Left, false, false, 0.0f)
+			this(caption, position, scale, color, Alignment.Left, false, false, 0.0f)
 		{
 		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextElement"/> class used for drawing text on the screen.
 		/// </summary>
@@ -42,22 +43,9 @@ namespace RDR2.UI
 		/// <param name="position">Set the <see cref="Position"/> on screen where to draw the <see cref="TextElement"/>.</param>
 		/// <param name="scale">Sets a <see cref="Scale"/> used to increase of decrease the size of the <see cref="TextElement"/>, for no scaling use 1.0f.</param>
 		/// <param name="color">Set the <see cref="Color"/> used to draw the <see cref="TextElement"/>.</param>
-		/// <param name="font">Sets the <see cref="Font"/> used when drawing the text.</param>
-		public TextElement(string caption, PointF position, float scale, Color color, Font font) :
-			this(caption, position, scale, color, font, Alignment.Left, false, false, 0.0f)
-		{
-		}
-		/// <summary>
-		/// Initializes a new instance of the <see cref="TextElement"/> class used for drawing text on the screen.
-		/// </summary>
-		/// <param name="caption">The <see cref="TextElement"/> to draw.</param>
-		/// <param name="position">Set the <see cref="Position"/> on screen where to draw the <see cref="TextElement"/>.</param>
-		/// <param name="scale">Sets a <see cref="Scale"/> used to increase of decrease the size of the <see cref="TextElement"/>, for no scaling use 1.0f.</param>
-		/// <param name="color">Set the <see cref="Color"/> used to draw the <see cref="TextElement"/>.</param>
-		/// <param name="font">Sets the <see cref="Font"/> used when drawing the text.</param>
 		/// <param name="alignment">Sets the <see cref="Alignment"/> used when drawing the text, <see cref="RDR2.UI.Alignment.Left"/>,<see cref="RDR2.UI.Alignment.Center"/> or <see cref="RDR2.UI.Alignment.Right"/>.</param>
-		public TextElement(string caption, PointF position, float scale, Color color, Font font, Alignment alignment) :
-			this(caption, position, scale, color, font, alignment, false, false, 0.0f)
+		public TextElement(string caption, PointF position, float scale, Color color, Alignment alignment) :
+			this(caption, position, scale, color, alignment, false, false, 0.0f)
 		{
 		}
 		/// <summary>
@@ -67,12 +55,11 @@ namespace RDR2.UI
 		/// <param name="position">Set the <see cref="Position"/> on screen where to draw the <see cref="TextElement"/>.</param>
 		/// <param name="scale">Sets a <see cref="Scale"/> used to increase of decrease the size of the <see cref="TextElement"/>, for no scaling use 1.0f.</param>
 		/// <param name="color">Set the <see cref="Color"/> used to draw the <see cref="TextElement"/>.</param>
-		/// <param name="font">Sets the <see cref="Font"/> used when drawing the text.</param>
 		/// <param name="alignment">Sets the <see cref="Alignment"/> used when drawing the text, <see cref="RDR2.UI.Alignment.Left"/>,<see cref="RDR2.UI.Alignment.Center"/> or <see cref="RDR2.UI.Alignment.Right"/>.</param>
 		/// <param name="shadow">Sets whether or not to draw the <see cref="TextElement"/> with a <see cref="Shadow"/> effect.</param>
 		/// <param name="outline">Sets whether or not to draw the <see cref="TextElement"/> with an <see cref="Outline"/> around the letters.</param>
-		public TextElement(string caption, PointF position, float scale, Color color, Font font, Alignment alignment, bool shadow, bool outline) :
-			this(caption, position, scale, color, font, alignment, shadow, outline, 0.0f)
+		public TextElement(string caption, PointF position, float scale, Color color, Alignment alignment, bool shadow, bool outline) :
+			this(caption, position, scale, color, alignment, shadow, outline, 0.0f)
 		{
 		}
 		/// <summary>
@@ -82,12 +69,11 @@ namespace RDR2.UI
 		/// <param name="position">Set the <see cref="Position"/> on screen where to draw the <see cref="TextElement"/>.</param>
 		/// <param name="scale">Sets a <see cref="Scale"/> used to increase of decrease the size of the <see cref="TextElement"/>, for no scaling use 1.0f.</param>
 		/// <param name="color">Set the <see cref="Color"/> used to draw the <see cref="TextElement"/>.</param>
-		/// <param name="font">Sets the <see cref="Font"/> used when drawing the text.</param>
 		/// <param name="alignment">Sets the <see cref="Alignment"/> used when drawing the text, <see cref="RDR2.UI.Alignment.Left"/>,<see cref="RDR2.UI.Alignment.Center"/> or <see cref="RDR2.UI.Alignment.Right"/>.</param>
 		/// <param name="shadow">Sets whether or not to draw the <see cref="TextElement"/> with a <see cref="Shadow"/> effect.</param>
 		/// <param name="outline">Sets whether or not to draw the <see cref="TextElement"/> with an <see cref="Outline"/> around the letters.</param>
 		/// <param name="wrapWidth">Sets how many horizontal pixel to draw before wrapping the <see cref="TextElement"/> on the next line down.</param>
-		public TextElement(string caption, PointF position, float scale, Color color, Font font, Alignment alignment, bool shadow, bool outline, float wrapWidth)
+		public TextElement(string caption, PointF position, float scale, Color color, Alignment alignment, bool shadow, bool outline, float wrapWidth)
 		{
 			_pinnedText = new List<IntPtr>();
 			Enabled = true;
@@ -95,7 +81,6 @@ namespace RDR2.UI
 			Position = position;
 			Scale = scale;
 			Color = color;
-			Font = font;
 			Alignment = alignment;
 			Shadow = shadow;
 			Outline = outline;
@@ -157,16 +142,7 @@ namespace RDR2.UI
 		{
 			get; set;
 		}
-		/// <summary>
-		/// Gets or sets the font of this <see cref="TextElement"/>.
-		/// </summary>
-		/// <value>
-		/// The RDR2 Font use when drawing.
-		/// </value>
-		public Font Font
-		{
-			get; set;
-		}
+
 		/// <summary>
 		/// Gets or sets the text to draw in this <see cref="TextElement"/>.
 		/// </summary>
@@ -181,19 +157,13 @@ namespace RDR2.UI
 			}
 			set
 			{
-				/*_caption = value;
+				_caption = value;
 				foreach (var ptr in _pinnedText)
 				{
 					Marshal.FreeCoTaskMem(ptr); //free any existing allocated text
 				}
 				_pinnedText.Clear();
 
-				RDR2DN.NativeFunc.PushLongString(value, (string str) => {
-					byte[] data = Encoding.UTF8.GetBytes(str + "\0");
-					IntPtr next = Marshal.AllocCoTaskMem(data.Length);
-					Marshal.Copy(data, 0, next, data.Length);
-					_pinnedText.Add(next);
-				});*/
 			}
 		}
 
@@ -260,84 +230,6 @@ namespace RDR2.UI
 		}
 
 		/// <summary>
-		/// Measures how many pixels in the horizontal axis this <see cref="TextElement"/> will use when drawn	against a 1280 pixel base
-		/// </summary>
-		/*public float Width
-		{
-			get
-			{
-				Function.Call(Hash._BEGIN_TEXT_COMMAND_GET_WIDTH, RDR2DN.NativeMemory.CellEmailBcon);
-
-				foreach (IntPtr ptr in _pinnedText)
-				{
-					Function.Call(Hash.ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME, ptr);
-				}
-
-				Function.Call(Hash.SET_TEXT_FONT, Font);
-				Function.Call(Hash.SET_TEXT_SCALE, Scale, Scale);
-
-				return Screen.Width * Function.Call<float>(Hash._END_TEXT_COMMAND_GET_WIDTH, 1);
-			}
-		}
-		/// <summary>
-		/// Measures how many pixels in the horizontal axis this <see cref="TextElement"/> will use when drawn against a <see cref="ScaledWidth"/> pixel base
-		/// </summary>
-		public float ScaledWidth
-		{
-			get
-			{
-				Function.Call(Hash._BEGIN_TEXT_COMMAND_GET_WIDTH, RDR2DN.NativeMemory.CellEmailBcon);
-
-				foreach (IntPtr ptr in _pinnedText)
-				{
-					Function.Call(Hash.ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME, ptr);
-				}
-
-				Function.Call(Hash.SET_TEXT_FONT, Font);
-				Function.Call(Hash.SET_TEXT_SCALE, Scale, Scale);
-
-				return Screen.ScaledWidth * Function.Call<float>(Hash._END_TEXT_COMMAND_GET_WIDTH, 1);
-			}
-		}
-
-		/// <summary>
-		/// Measures how many pixels in the horizontal axis the string will use when drawn
-		/// </summary>
-		/// <param name="text">The string of text to measure.</param>
-		/// <param name="font">The <see cref="RDR2.UI.Font"/> of the textu to measure.</param>
-		/// <param name="scale">Sets a sclae value for increasing or decreasing the size of the text, default value 1.0f - no scaling.</param>
-		/// <returns>
-		/// The amount of pixels scaled on a 1280 pixel width base
-		/// </returns>
-		public static float GetStringWidth(string text, Font font = Font.ChaletLondon, float scale = 1.0f)
-		{
-			Function.Call(Hash._BEGIN_TEXT_COMMAND_GET_WIDTH, RDR2DN.NativeMemory.CellEmailBcon);
-			RDR2DN.NativeFunc.PushLongString(text);
-			Function.Call(Hash.SET_TEXT_FONT, font);
-			Function.Call(Hash.SET_TEXT_SCALE, scale, scale);
-
-			return Screen.Width * Function.Call<float>(Hash._END_TEXT_COMMAND_GET_WIDTH, 1);
-		}
-		/// <summary>
-		/// Measures how many pixels in the horizontal axis the string will use when drawn
-		/// </summary>
-		/// <param name="text">The string of text to measure.</param>
-		/// <param name="font">The <see cref="RDR2.UI.Font"/> of the textu to measure.</param>
-		/// <param name="scale">Sets a sclae value for increasing or decreasing the size of the text, default value 1.0f - no scaling.</param>
-		/// <returns>
-		/// The amount of pixels scaled by the pixel width base return in <see cref="Screen.ScaledWidth"/>
-		/// </returns>
-		public static float GetScaledStringWidth(string text, Font font = Font.ChaletLondon, float scale = 1.0f)
-		{
-			Function.Call(Hash._BEGIN_TEXT_COMMAND_GET_WIDTH, RDR2DN.NativeMemory.CellEmailBcon);
-			RDR2DN.NativeFunc.PushLongString(text);
-			Function.Call(Hash.SET_TEXT_FONT, font);
-			Function.Call(Hash.SET_TEXT_SCALE, scale, scale);
-
-			return Screen.ScaledWidth * Function.Call<float>(Hash._END_TEXT_COMMAND_GET_WIDTH, 1);
-		}*/
-
-		/// <summary>
 		/// Draws the <see cref="TextElement" /> this frame.
 		/// </summary>
 		public virtual void Draw()
@@ -387,6 +279,8 @@ namespace RDR2.UI
 
 			Function.Call(Hash.SET_TEXT_SCALE, Scale, Scale);
 			Function.Call(Hash._SET_TEXT_COLOR, Color.R, Color.G, Color.B, Color.A);
+			string varString = Function.Call<string>(Hash.CREATE_STRING, 10, "LITERAL_STRING", _caption);
+			Function.Call(Hash._DRAW_TEXT, varString, x, y);
 
 		}
 	}

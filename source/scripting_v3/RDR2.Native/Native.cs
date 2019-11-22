@@ -458,7 +458,8 @@ namespace RDR2.Native
 			}
 			if (value is string valueString)
 			{
-				return (ulong)RDR2DN.ScriptDomain.CurrentDomain.PinString(valueString).ToInt64();
+				RDR2DN.Log.Message(RDR2DN.Log.Level.Info, "st1. input is string...");
+				return (ulong)RDR2DN.ScriptDomain.CurrentDomain.PinString(valueString);
 			}
 
 			// Scripting types

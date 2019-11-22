@@ -53,7 +53,6 @@ namespace RDR2.UI
 		/// </summary>
 		public static CursorSprite CursorSprite
 		{
-			get => (CursorSprite)RDR2DN.NativeMemory.CursorSprite;
 			set => Function.Call(Hash._SET_MOUSE_CURSOR_SPRITE, value);
 		}
 

@@ -54,7 +54,7 @@ public:
 	[RDR2DN::ConsoleCommand("Reload all scripts from the scripts directory")]
 	static void Reload()
 	{
-		console->PrintInfo("~y~Reloading ...");
+		//console->PrintInfo("~y~Reloading ...");
 
 		// Force a reload on next tick
 		sGameReloaded = true;

@@ -42,7 +42,6 @@ namespace RDR2
 			get;
 		}
 
-		public unsafe int* MemoryAddress => (int*)RDR2DN.NativeMemory.GetEntityAddress(Handle).ToPointer();
 
 		public bool IsDead => Function.Call<bool>(Hash.IS_ENTITY_DEAD, Handle);
 		public bool IsAlive => !IsDead;
@@ -80,16 +79,6 @@ namespace RDR2
 
 		public bool FreezePosition
 		{
-			get
-			{
-				var address = RDR2DN.NativeMemory.GetEntityAddress(Handle);
-				if (address == IntPtr.Zero)
-				{
-					return false;
-				}
-
-				return RDR2DN.NativeMemory.IsBitSet(address + 0x2E, 1);
-			}
 			set => Function.Call(Hash.FREEZE_ENTITY_POSITION, Handle, value);
 		}
 
@@ -347,31 +336,11 @@ namespace RDR2
 
 		public bool IsInvincible
 		{
-			get
-			{
-				var address = RDR2DN.NativeMemory.GetEntityAddress(Handle);
-				if (address == IntPtr.Zero)
-				{
-					return false;
-				}
-
-				return RDR2DN.NativeMemory.IsBitSet(address + 392, 8);
-			}
 			set => Function.Call(Hash.SET_ENTITY_INVINCIBLE, Handle, value);
 		}
 
 		public bool IsOnlyDamagedByPlayer
 		{
-			get
-			{
-				var address = RDR2DN.NativeMemory.GetEntityAddress(Handle);
-				if (address == IntPtr.Zero)
-				{
-					return false;
-				}
-
-				return RDR2DN.NativeMemory.IsBitSet(address + 392, 9);
-			}
 			set => Function.Call(Hash.SET_ENTITY_ONLY_DAMAGED_BY_PLAYER, Handle, value);
 		}
 

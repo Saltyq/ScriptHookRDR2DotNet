@@ -31,12 +31,11 @@ namespace RDR2.NaturalMotion
 		}
 
 		/// <summary>
-		/// Stops this Natural Motion behavior on the given <see cref="Ped"/>.
+		/// DO NOT USE DO NOT USE/>.
 		/// </summary>
-		/// <param name="target">The <see cref="Ped"/> to send the Abort <see cref="Message"/> to.</param>
 		public void Abort(Ped target)
 		{
-			RDR2DN.NativeMemory.SendEuphoriaMessage(target.Handle, _message, _stopArgument);
+			//RDR2DN.NativeMemory.SendEuphoriaMessage(target.Handle, _message, _stopArgument);
 		}
 
 		/// <summary>
@@ -55,9 +54,6 @@ namespace RDR2.NaturalMotion
 				Function.Call(Hash.SET_PED_TO_RAGDOLL, target.Handle, 10000, -1, 1, 1, 1, 0);
 			}
 
-			SetArgument("start", true);
-
-			RDR2DN.NativeMemory.SendEuphoriaMessage(target.Handle, _message, _arguments);
 		}
 		/// <summary>
 		///	Starts this Natural Motion behavior on the <see cref="Ped"/> for a specified duration.

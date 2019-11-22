@@ -90,7 +90,6 @@ namespace RDR2
 
 		public static float TimeScale
 		{
-			get => RDR2DN.NativeMemory.TimeScale;
 			set => Function.Call(Hash.SET_TIME_SCALE, value);
 		}
 

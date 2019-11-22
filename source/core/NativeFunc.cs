@@ -58,6 +58,7 @@ namespace RDR2DN
 		/// <param name="str">The string to push.</param>
 		static void PushString(string str)
 		{
+			
 			var domain = RDR2DN.ScriptDomain.CurrentDomain;
 			if (domain == null)
 			{
@@ -69,7 +70,7 @@ namespace RDR2DN
 
             conargs[3] = (ulong)strUtf8.ToInt64();
             domain.ExecuteTask(new NativeTask {
-				Hash = 0xFA925AC00EB830B9  /*ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME*/,
+				Hash = 0xFA925AC00EB830B9,
 				Arguments = conargs
 			});
 		}

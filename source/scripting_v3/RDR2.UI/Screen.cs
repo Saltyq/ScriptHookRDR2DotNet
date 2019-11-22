@@ -118,24 +118,6 @@ namespace RDR2.UI
 			return Function.Call<bool>(Hash.ANIMPOSTFX_IS_RUNNING, _effects[(int)effectName]);
 		}
 
-		/*/// <summary>
-		/// Starts applying the specified effect to the screen.
-		/// </summary>
-		/// <param name="effectName">The <see cref="ScreenEffect"/> to start playing.</param>
-		/// <param name="duration">The duration of the effect in milliseconds or zero to use the default length.</param>
-		/// <param name="looped">If <c>true</c> the effect won't stop until <see cref="Screen.StopEffect(ScreenEffect)"/> is called.</param>
-		public static void StartEffect(ScreenEffect effectName, int duration = 0, bool looped = false)
-		{
-			Function.Call(Hash.ANIMPOSTFX_PLAY, _effects[(int)effectName], duration, looped);
-		}
-		/// <summary>
-		/// Stops applying the specified effect to the screen.
-		/// </summary>
-		/// <param name="effectName">The <see cref="ScreenEffect"/> to stop playing.</param>
-		public static void StopEffect(ScreenEffect effectName)
-		{
-			Function.Call(Hash.ANIMPOSTFX_STOP, _effects[(int)effectName]);
-		}*/
 		/// <summary>
 		/// Stops all currently running effects.
 		/// </summary>
@@ -150,32 +132,20 @@ namespace RDR2.UI
 		/// Shows a subtitle at the bottom of the screen for a given time
 		/// </summary>
 		/// <param name="message">The message to display.</param>
-		/// <param name="duration">The duration to display the subtitle in milliseconds.</param>
-		/*public static unsafe void ShowSubtitleThisFrame(string message)
+		public static void ShowSubtitle(string message)
 		{
 			try
 			{
-				string varString = Function.Call<string>(Hash.CREATE_STRING, 10, RDR2DN.NativeMemory.ReadString(RDR2DN.NativeMemory.ReadAddress(RDR2DN.NativeMemory.String)), message);
-				//Function.Call(Hash._LOG_SET_CACHED_OBJECTIVE, RDR2DN.NativeMemory.StringToCoTaskMemUTF8(varString).ToInt64());
-				//Function.Call(Hash._LOG_PRINT_CACHED_OBJECTIVE);
-				//Function.Call(Hash._LOG_CLEAR_CACHED_OBJECTIVE);
+				string varString = Function.Call<string>(Hash.CREATE_STRING, 10, "LITERAL_STRING", message);
+				Function.Call(Hash._LOG_SET_CACHED_OBJECTIVE, varString);
+				Function.Call(Hash._LOG_PRINT_CACHED_OBJECTIVE);
+				Function.Call(Hash._LOG_CLEAR_CACHED_OBJECTIVE);
 			}
 			catch (Exception ex)
 			{
 				RDR2DN.Log.Message(RDR2DN.Log.Level.Error, ex.ToString());
 			}
-		}*/
-		/*/// <summary>
-		/// Displays a help message in the top corner of the screen this frame.
-		/// </summary>
-		/// <param name="helpText">The text to display.</param>
-		public static void ShowHelpTextThisFrame(string helpText)
-		{
-			Function.Call(Hash.BEGIN_TEXT_COMMAND_DISPLAY_HELP, RDR2DN.NativeMemory.CellEmailBcon);
-			RDR2DN.NativeFunc.PushLongString(helpText);
-			Function.Call(Hash.END_TEXT_COMMAND_DISPLAY_HELP, 0, 0, 1, -1);
-		}*/
-
+		}
 		// Space Conversion
 
 		/// <summary>

@@ -220,92 +220,24 @@ namespace RDR2
 
 		public static Ped[] GetAllPeds()
 		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPedHandles(), handle => new Ped(handle));
+			int[] peds = new int[] {  };
+			RDR2DN.NativeMemory.getAllPeds(peds, 150);
+			return Array.ConvertAll(peds, handle => new Ped(handle));
 		}
-		public static Ped[] GetAllPeds(Model model)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPedHandles(new[] { model.Hash }), handle => new Ped(handle));
-		}
-		public static Ped[] GetNearbyPeds(Ped ped, float radius)
-		{
-			int[] handles = RDR2DN.NativeMemory.GetPedHandles(ped.Position.ToArray(), radius);
-
-			var result = new List<Ped>();
-
-			foreach (int handle in handles)
-			{
-				if (handle == ped.Handle)
-				{
-					continue;
-				}
-
-				result.Add(new Ped(handle));
-			}
-
-			return result.ToArray();
-		}
-		public static Ped[] GetNearbyPeds(Vector3 position, float radius)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPedHandles(position.ToArray(), radius), handle => new Ped(handle));
-		}
-		public static Ped[] GetNearbyPeds(Vector3 position, float radius, Model model)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPedHandles(position.ToArray(), radius, new[] { model.Hash }), handle => new Ped(handle));
-		}
-
 		public static Vehicle[] GetAllVehicles()
 		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetVehicleHandles(), handle => new Vehicle(handle));
+			int[] vehs = new int[] { };
+			RDR2DN.NativeMemory.getAllVehicles(vehs, 150);
+			return Array.ConvertAll(vehs, handle => new Vehicle(handle));
 		}
-		public static Vehicle[] GetAllVehicles(Model model)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetVehicleHandles(new[] { model.Hash }), handle => new Vehicle(handle));
-		}
-		public static Vehicle[] GetNearbyVehicles(Ped ped, float radius)
-		{
-			int[] handles = RDR2DN.NativeMemory.GetVehicleHandles(ped.Position.ToArray(), radius);
-
-			var result = new List<Vehicle>();
-			Vehicle ignore = ped.CurrentVehicle;
-			int ignoreHandle = Vehicle.Exists(ignore) ? ignore.Handle : 0;
-
-			foreach (int handle in handles)
-			{
-				if (handle == ignoreHandle)
-				{
-					continue;
-				}
-
-				result.Add(new Vehicle(handle));
-			}
-
-			return result.ToArray();
-		}
-		public static Vehicle[] GetNearbyVehicles(Vector3 position, float radius)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetVehicleHandles(position.ToArray(), radius), handle => new Vehicle(handle));
-		}
-		public static Vehicle[] GetNearbyVehicles(Vector3 position, float radius, Model model)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetVehicleHandles(position.ToArray(), radius, new[] { model.Hash }), handle => new Vehicle(handle));
-		}
-
+		
 		public static Prop[] GetAllProps()
 		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPropHandles(), handle => new Prop(handle));
+			int[] objs = new int[] { };
+			RDR2DN.NativeMemory.getAllObjects(objs, 150);
+			return Array.ConvertAll(objs, handle => new Prop(handle));
 		}
-		public static Prop[] GetAllProps(Model model)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPropHandles(new[] { model.Hash }), handle => new Prop(handle));
-		}
-		public static Prop[] GetNearbyProps(Vector3 position, float radius)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPropHandles(position.ToArray(), radius), handle => new Prop(handle));
-		}
-		public static Prop[] GetNearbyProps(Vector3 position, float radius, Model model)
-		{
-			return Array.ConvertAll(RDR2DN.NativeMemory.GetPropHandles(position.ToArray(), radius, new[] { model.Hash }), handle => new Prop(handle));
-		}
+		
 
 		/*public static Blip[] GetActiveBlips()
 		{
@@ -326,15 +258,6 @@ namespace RDR2
 			return res.ToArray();
 		}*/ // need blip natives
 
-		public static Entity[] GetAllEntities()
-		{
-			return Array.ConvertAll<int, Entity>(RDR2DN.NativeMemory.GetEntityHandles(), Entity.FromHandle);
-		}
-		public static Entity[] GetNearbyEntities(Vector3 position, float radius)
-		{
-			return Array.ConvertAll<int, Entity>(RDR2DN.NativeMemory.GetEntityHandles(position.ToArray(), radius), Entity.FromHandle);
-		}
-
 		public static T GetClosest<T>(Vector3 position, params T[] spatials) where T : ISpatial
 		{
 			ISpatial closest = null;
@@ -354,13 +277,17 @@ namespace RDR2
 		}
 		public static Ped GetClosestPed(Vector3 position, float radius)
 		{
-			Ped[] peds = Array.ConvertAll(RDR2DN.NativeMemory.GetPedHandles(position.ToArray(), radius), handle => new Ped(handle));
-			return GetClosest(position, peds);
+			int[] peds = new int[] { };
+			RDR2DN.NativeMemory.getAllPeds(peds, 150);
+			Ped[] newPeds = Array.ConvertAll(peds, handle => new Ped(handle));
+			return GetClosest(position, newPeds);
 		}
 		public static Vehicle GetClosestVehicle(Vector3 position, float radius)
 		{
-			Vehicle[] vehicles = Array.ConvertAll(RDR2DN.NativeMemory.GetVehicleHandles(position.ToArray(), radius), handle => new Vehicle(handle));
-			return GetClosest(position, vehicles);
+			int[] vehs = new int[] { };
+			RDR2DN.NativeMemory.getAllVehicles(vehs, 150);
+			Vehicle[] newVehs = Array.ConvertAll(vehs, handle => new Vehicle(handle));
+			return GetClosest(position, newVehs);
 
 		}
 

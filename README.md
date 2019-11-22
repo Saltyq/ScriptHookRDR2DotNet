@@ -7,10 +7,7 @@ This is an ASI plugin for Red Dead Redemption 2, ported from [**ScriptHookVDotNe
 
 The issues page should be primarily used for bug reports and enhancement ideas. Questions related to RDR2 scripting in general are better off in forums dedicated to this purpose, like [NexusMods](https://www.nexusmods.com/reddeadredemption2) or [gtaforums.com](https://gtaforums.com/forum/459-modding/).
 
-Join the official [**Red Dead Redemption 2 Modding Discord**](http://discord.gg/wdNC5hn) for the latest information about Red Dead Redemption 2 PC mods
-
-## Known Issues
-* None
+**Join the official [**Red Dead Redemption 2 Modding Discord**](http://discord.gg/wdNC5hn) for the latest information about Red Dead Redemption 2 PC mods**
 
 ## Requirements
 
@@ -20,7 +17,10 @@ Join the official [**Red Dead Redemption 2 Modding Discord**](http://discord.gg/
 
 ## Downloads
 
-Pre-built binaries can be found on the [releases](https://github.com/crosire/scripthookrdr2dotnet/releases) page.
+Pre-built binaries can be found on the [releases](https://github.com/saltyq/scripthookrdr2dotnet/releases) page.
+
+## Known Issues
+* None
 
 ## Contributing
 
@@ -33,7 +33,6 @@ Any contributions to the project are welcomed, it's recommended to use GitHub [p
 ## License
 
 All the source code except for the Vector, Matrix and Quaternion classes, which are licensed separately, is licensed under the conditions of the [zlib license](LICENSE.txt).
-
 
 ### Credits
 * Crosire (ScriptHookVDotNet)

@@ -115,7 +115,7 @@ namespace RDR2
 
 		public virtual Vector3 Position
 		{
-			get => Function.Call<Vector3>(Hash.GET_ENTITY_COORDS, Handle, 0);
+			get => Function.Call<Vector3>(Hash.GET_ENTITY_COORDS, Handle, true, 0);
 			set => Function.Call(Hash.SET_ENTITY_COORDS, Handle, value.X, value.Y, value.Z, 0, 0, 0, 1);
 		}
 

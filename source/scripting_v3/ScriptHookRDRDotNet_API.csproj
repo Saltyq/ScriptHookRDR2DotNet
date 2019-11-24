@@ -83,6 +83,7 @@
     <Compile Include="RDR2\BlipSprite.cs" />
     <Compile Include="RDR2\Camera.cs" />
     <Compile Include="RDR2\CameraShake.cs" />
+    <Compile Include="RDR2\Console.cs" />
     <Compile Include="RDR2\Control.cs" />
     <Compile Include="RDR2\Entities\Entity.cs" />
     <Compile Include="RDR2\Entities\EntityType.cs" />

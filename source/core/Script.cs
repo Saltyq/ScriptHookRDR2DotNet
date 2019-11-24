@@ -17,6 +17,8 @@ namespace RDR2DN
 		internal SemaphoreSlim continueEvent = new SemaphoreSlim(0);
 		internal ConcurrentQueue<Tuple<bool, KeyEventArgs>> keyboardEvents = new ConcurrentQueue<Tuple<bool, KeyEventArgs>>();
 
+        private bool firstTime = true;
+
 		/// <summary>
 		/// Gets or sets the interval in ms between each <see cref="Tick"/>.
 		/// </summary>
@@ -122,8 +124,8 @@ namespace RDR2DN
 					Abort(); return;
 				}
 
-				// Yield execution to next tick
-				Wait(Interval);
+                // Yield execution to next tick
+                Wait(Interval);
 			}
 		}
 
@@ -135,8 +137,20 @@ namespace RDR2DN
 			thread = new Thread(new ThreadStart(MainLoop));
 			thread.Start();
 
-			Log.Message(Log.Level.Info, "Started script ", Name, ".");
-		}
+            unsafe
+            {
+                if (!firstTime) {  }
+                else
+                {
+                    NativeFunc.Invoke(0x4170B650590B3B00, 0.1f, 0.1f);
+                    var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", "ScriptHookRDR2 .NET Loaded...");
+                    NativeFunc.Invoke(0xD79334A4BB99BAD1, *res, 0.0f, 0.0f);
+                    firstTime = false;
+                }
+            }
+
+            Log.Message(Log.Level.Info, "Started script ", Name, ".");
+        }
 		/// <summary>
 		/// Aborts execution of this script.
 		/// </summary>

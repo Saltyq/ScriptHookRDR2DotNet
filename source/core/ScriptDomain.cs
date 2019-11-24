@@ -648,10 +648,9 @@ namespace RDR2DN
 			}
 			else
 			{
-                if (pinnedStrings.Contains(handle))
-                {
-                    pinnedStrings.Add(handle);
-                }
+                
+                pinnedStrings.Add(handle);
+                
 
                 return handle;
 			}

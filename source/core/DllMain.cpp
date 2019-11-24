@@ -112,7 +112,7 @@ internal:
 	static RDR2DN::Console^ console = nullptr;
 	static RDR2DN::ScriptDomain^ domain = RDR2DN::ScriptDomain::CurrentDomain;
 	static WinForms::Keys reloadKey = WinForms::Keys::None;
-	static WinForms::Keys consoleKey = WinForms::Keys::F4;
+	static WinForms::Keys consoleKey = WinForms::Keys::F8;
 
 	static void SetConsole()
 	{
@@ -120,7 +120,7 @@ internal:
 	}
 
 };
-
+bool devConfig;
 static void ScriptHookRDRDotNet_ManagedInit()
 {
 	RDR2DN::Console^% console = ScriptHookRDRDotNet::console;
@@ -157,6 +157,8 @@ static void ScriptHookRDRDotNet_ManagedInit()
 			else if (data[0] == "ScriptsLocation")
 				scriptPath = data[1];
 		}
+		devConfig = IO::File::Exists(IO::Path::ChangeExtension(Assembly::GetExecutingAssembly()->Location, ".dev"));
+
 		RDR2DN::Log::Message(RDR2DN::Log::Level::Info, "Config loaded from ", IO::Path::ChangeExtension(Assembly::GetExecutingAssembly()->Location, ".ini"));
 
 	}
@@ -176,8 +178,8 @@ static void ScriptHookRDRDotNet_ManagedInit()
 	}
 
 
-	// Console Stuff -- commented out until internal drawtext is solved
-	/*try
+	// Console Stuff
+	try
 	{
 		// Instantiate console inside script domain, so that it can access the scripting API
 		console = (RDR2DN::Console^)domain->AppDomain->CreateInstanceFromAndUnwrap(
@@ -197,7 +199,7 @@ static void ScriptHookRDRDotNet_ManagedInit()
 	catch (Exception ^ ex)
 	{
 		RDR2DN::Log::Message(RDR2DN::Log::Level::Error, "Failed to create console: ", ex->ToString());
-	}*/
+	}
 
 	// Start scripts in the newly created domain
 	domain->Start();
@@ -265,8 +267,11 @@ static void ScriptHookRDRDotNet_ManagedKeyboardMessage(unsigned long keycode, bo
 #include <Windows.h>
 #include <WinBase.h>
 
+
+
 PVOID sGameFiber = nullptr;
 PVOID sScriptFiber = nullptr;
+
 
 static void ScriptMain()
 {
@@ -278,6 +283,7 @@ static void ScriptMain()
 	// Check if our CLR fiber already exists. It should be created only once for the entire lifetime of the game process.
 	if (sScriptFiber == nullptr)
 	{
+		
 		const LPFIBER_START_ROUTINE FiberMain = [](LPVOID lpFiberParameter) {
 			// Main script execution loop
 			while (true)
@@ -296,6 +302,8 @@ static void ScriptMain()
 					// Code continues from here the next time the loop below switches back to our CLR fiber.
 					SwitchToFiber(sGameFiber);
 				}
+
+
 			}
 		};
 

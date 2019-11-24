@@ -21,14 +21,12 @@ namespace ExampleScript
 
         private void OnTick(object sender, EventArgs e)
         {
-            Player player = Game.Player;
-            Ped playerPed = player.Character;
+            Ped playerPed = Game.Player.Character;
             
             if (ragdoll)
             {
                 Function.Call(Hash.SET_PED_TO_RAGDOLL, playerPed, 5000, 5000, 0, false, false, false);
             }
-            
         } 
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -36,6 +34,7 @@ namespace ExampleScript
             if (e.KeyCode == Keys.C)
             {
                 ragdoll = !ragdoll;
+				RDR2.UI.Screen.ShowSubtitle("Ragdoll");
             }
         }
         

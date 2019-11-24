@@ -97,7 +97,7 @@ namespace RDR2.Math
 		{
 			get
 			{
-				Vector3 axis;
+				Vector3 axis = new Vector3();
 				float length = Length();
 
 				if (length != 0.0f)

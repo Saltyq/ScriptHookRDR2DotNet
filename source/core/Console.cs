@@ -40,9 +40,9 @@ namespace RDR2DN
 		static readonly Color InputColor = Color.White;
 		static readonly Color InputColorBusy = Color.DarkGray;
 		static readonly Color OutputColor = Color.White;
-		static readonly Color PrefixColor = Color.FromArgb(255, 52, 152, 219);
-		static readonly Color BackgroundColor = Color.FromArgb(200, Color.Black);
-		static readonly Color AltBackgroundColor = Color.FromArgb(200, 52, 73, 94);
+		static readonly Color PrefixColor = Color.FromArgb(255, 189, 216, 216);
+		static readonly Color BackgroundColor = Color.FromArgb(120, Color.Black);
+		static readonly Color AltBackgroundColor = Color.FromArgb(120, 180, 15, 15);
 
 		[DllImport("user32.dll")]
 		static extern int ToUnicode(
@@ -554,7 +554,7 @@ namespace RDR2DN
 				compilerOptions.ReferencedAssemblies.Add("System.Drawing.dll");
 				compilerOptions.ReferencedAssemblies.Add("System.Windows.Forms.dll");
 				// Reference the newest scripting API
-				compilerOptions.ReferencedAssemblies.Add("ScriptHookRDRDotNet.dll");
+				compilerOptions.ReferencedAssemblies.Add("ScriptHookRDRNetAPI.dll");
 				compilerOptions.ReferencedAssemblies.Add(typeof(ScriptDomain).Assembly.Location);
 
 				foreach (var script in ScriptDomain.CurrentDomain.RunningScripts.Where(x => x.IsRunning))
@@ -613,11 +613,12 @@ namespace RDR2DN
 		}
 		static unsafe void DrawText(float x, float y, string text, Color color)
 		{
+            float fX = x / (float)1280;
+            float fY = y / (float)720;
 			NativeFunc.Invoke(0x4170B650590B3B00  /*SET_TEXT_SCALE*/, 0.35f, 0.35f);
             NativeFunc.Invoke(0x50A41AD966910F03  /*SET_TEXT_COLOR*/, color.R, color.G, color.B, color.A);
             var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", text);
-            object varString = (string)NativeMemory.PtrToStringUTF8(new IntPtr((char*)*res));
-            NativeFunc.Invoke(0xD79334A4BB99BAD1, varString, x, y);
+            NativeFunc.Invoke(0xD79334A4BB99BAD1, *res, fX, fY);
 
         }
 

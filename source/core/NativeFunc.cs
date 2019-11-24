@@ -196,7 +196,7 @@ namespace RDR2DN
 				}
 				if (args[i] is string valueString)
 				{
-					result[i] = (ulong)ScriptDomain.CurrentDomain.PinString(valueString);
+					result[i] = (ulong)ScriptDomain.CurrentDomain.PinString(valueString).ToInt64();
 					continue;
 				}
 

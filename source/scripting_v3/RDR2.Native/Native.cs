@@ -37,8 +37,8 @@ namespace RDR2.Native
 			Z = z;
 		}
 
-		public static explicit operator Vector2(NativeVector3 val) => new Vector2(val.X, val.Y);
-		public static explicit operator Vector3(NativeVector3 val) => new Vector3(val.X, val.Y, val.Z);
+		public static implicit operator Vector3(NativeVector3 value) => new Vector3(value.X, value.Y, value.Z);
+		public static implicit operator NativeVector3(Vector3 value) => new NativeVector3(value.X, value.Y, value.Z);
 	}
 
 	internal unsafe static class NativeHelper<T>
@@ -458,8 +458,7 @@ namespace RDR2.Native
 			}
 			if (value is string valueString)
 			{
-				RDR2DN.Log.Message(RDR2DN.Log.Level.Info, "st1. input is string...");
-				return (ulong)RDR2DN.ScriptDomain.CurrentDomain.PinString(valueString);
+				return (ulong)RDR2DN.ScriptDomain.CurrentDomain.PinString(valueString).ToInt64();
 			}
 
 			// Scripting types
@@ -511,7 +510,7 @@ namespace RDR2.Native
 		{
 			if (type == typeof(string))
 			{
-				return RDR2DN.NativeMemory.PtrToStringUTF8(new IntPtr((char*)*value));
+				return RDR2DN.NativeMemory.PtrToStringUTF8(new IntPtr((byte*)*value));
 			}
 
 			// Scripting types

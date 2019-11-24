@@ -116,7 +116,11 @@ namespace RDR2DN
 		static NativeMemory()
 		{
 			byte* address;
-		}
+
+            /*address = FindPattern("\x40\x53\x48\x83\xEC\x20\x33\xDB\x38\x1D\x00\x00\x00\x00\x74\x1C", "xxxxxxxxxx????xx");
+            GetPlayerAddressFunc = GetDelegateForFunctionPointer<GetHandleAddressFuncDelegate>(
+                new IntPtr(*(int*)(address + 3) + address + 7));*/
+        }
 
 		/// <summary>
 		/// Reads a single 8-bit value from the specified <paramref name="address"/>.
@@ -315,43 +319,36 @@ namespace RDR2DN
 
 			return PtrToStringUTF8(ptr, len);
 		}
-		public static string PtrToStringUTF8(IntPtr ptr, int len)
+		public static string PtrToStringUTF8(IntPtr nativeUtf8, int len)
 		{
-			if (len < 0)
-				throw new ArgumentException(null, nameof(len));
-
-			if (ptr == IntPtr.Zero)
-				return null;
-			if (len == 0)
-				return string.Empty;
-
-			return Encoding.UTF8.GetString((byte*)ptr.ToPointer(), len);
-		}
+            while (Marshal.ReadByte(nativeUtf8, len) != 0) ++len;
+            byte[] buffer = new byte[len];
+            Marshal.Copy(nativeUtf8, buffer, 0, buffer.Length);
+            return Encoding.UTF8.GetString(buffer);
+        }
 
 
         public static IntPtr StringToCoTaskMemUTF8(string managedString)
         {
             int len = Encoding.UTF8.GetByteCount(managedString);
-
             byte[] buffer = new byte[len + 1];
-
             Encoding.UTF8.GetBytes(managedString, 0, managedString.Length, buffer, 0);
-
             IntPtr nativeUtf8 = Marshal.AllocHGlobal(buffer.Length);
-
             Marshal.Copy(buffer, 0, nativeUtf8, buffer.Length);
-
             return nativeUtf8;
         }
-        
 
-		#region -- Cameras --
+        //delegate ulong GetHandleAddressFuncDelegate(int handle);
+        //static GetHandleAddressFuncDelegate GetPlayerAddressFunc;
 
-		#endregion
+        /*public static IntPtr GetPlayerAddress(int handle)
+        {
+            return new IntPtr((long)GetPlayerAddressFunc(handle));
+        }*/
 
-		#region -- Game Data --
+        #region -- Game Data --
 
-		delegate uint GetHashKeyDelegate(IntPtr stringPtr, uint initialHash);
+        delegate uint GetHashKeyDelegate(IntPtr stringPtr, uint initialHash);
 		static GetHashKeyDelegate GetHashKeyFunc;
 
 		public static uint GetHashKey(string key)
@@ -368,21 +365,6 @@ namespace RDR2DN
 
 		#endregion
 
-		#region -- Vehicle Offsets --
-
-		public static int GearOffset { get; }
-		public static int HighGearOffset { get; }
-
-		public static int CurrentRPMOffset { get; }
-		public static int AccelerationOffset { get; }
-
-		public static int FuelLevelOffset { get; }
-		public static int WheelSpeedOffset { get; }
-
-		public static int SteeringAngleOffset { get; }
-		public static int SteeringScaleOffset { get; }
-
-		#endregion
 
 
 

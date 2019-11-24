@@ -274,7 +274,7 @@ namespace RDR2.UI
 
 			if (Shadow)
 			{
-				Function.Call(Hash.SET_TEXT_DROPSHADOW);
+				Function.Call(Hash.SET_TEXT_DROPSHADOW,2,0,0,0,255);
 			}
 
 			Function.Call(Hash.SET_TEXT_SCALE, Scale, Scale);

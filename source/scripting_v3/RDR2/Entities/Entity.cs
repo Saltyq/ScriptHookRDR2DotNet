@@ -37,10 +37,6 @@ namespace RDR2
 			return null;
 		}
 
-		public virtual int Handle
-		{
-			get;
-		}
 
 
 		public bool IsDead => Function.Call<bool>(Hash.IS_ENTITY_DEAD, Handle);

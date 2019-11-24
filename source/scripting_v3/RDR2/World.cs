@@ -291,7 +291,7 @@ namespace RDR2
 
 		}
 
-		public static Ped CreatePed(Model model, Vector3 position)
+		/*public static Ped CreatePed(Model model, Vector3 position)
 		{
 			return CreatePed(model, position, 0.0f);
 		}
@@ -303,7 +303,7 @@ namespace RDR2
 			}
 
 			return Function.Call<Ped>(Hash.CREATE_PED, model.Hash, position.X, position.Y, position.Z, heading, false, false, 0);
-        }
+        }*/
 
 		#endregion
 

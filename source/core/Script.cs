@@ -139,11 +139,10 @@ namespace RDR2DN
 
             unsafe
             {
-                if (!firstTime) {  }
-                else
+                while (firstTime)
                 {
                     NativeFunc.Invoke(0x4170B650590B3B00, 0.1f, 0.1f);
-                    var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", "ScriptHookRDR2 .NET Loaded...");
+                    var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", " ");
                     NativeFunc.Invoke(0xD79334A4BB99BAD1, *res, 0.0f, 0.0f);
                     firstTime = false;
                 }

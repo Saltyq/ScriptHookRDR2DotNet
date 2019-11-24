@@ -249,7 +249,7 @@ namespace RDR2
 				return 0;
 			}
 
-			return unchecked((int)RDR2DN.NativeMemory.GetHashKey(input));
+			return Function.Call<int>(Hash.GET_HASH_KEY, input);
 		}
 
 		public static string GetGXTEntry(string entry)

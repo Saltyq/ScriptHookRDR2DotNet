@@ -1,12 +1,8 @@
-bool sGameReloaded = false;
-
 #pragma managed
 #include <stdio.h>  /* defines FILENAME_MAX */
 #define WINDOWS
-#ifdef WINDOWS
 #include <direct.h>
 #define GetCurrentDir _getcwd
-#endif
 #include<iostream>
 
 // Import C# code base
@@ -21,10 +17,12 @@ namespace WinForms = System::Windows::Forms;
 [assembly:AssemblyProductAttribute("ScriptHookRDRDotNet")];
 [assembly:AssemblyDescriptionAttribute("An ASI plugin for Red Dead Redemption 2, which allows running scripts written in any .NET language in-game.")];
 [assembly:AssemblyVersionAttribute("1.0.0.0")];
-[assembly:AssemblyCopyrightAttribute("Copyright © 2015 crosire | Copyright © 2019 SaltyDev")];
+[assembly:AssemblyCopyrightAttribute("Copyright © 2015 crosire | Copyright © 2019 Salty")];
 // Sign with a strong name to distinguish from older versions and cause .NET framework runtime to bind the correct assemblies
 // There is no version check performed for assemblies without strong names (https://docs.microsoft.com/en-us/dotnet/framework/deployment/how-the-runtime-locates-assemblies)
 [assembly:AssemblyKeyFileAttribute("PublicKeyToken.snk")];
+
+bool sGameReloaded = false;
 
 public ref class ScriptHookRDRDotNet
 {
@@ -120,7 +118,6 @@ internal:
 	}
 
 };
-bool devConfig;
 static void ScriptHookRDRDotNet_ManagedInit()
 {
 	RDR2DN::Console^% console = ScriptHookRDRDotNet::console;
@@ -157,7 +154,6 @@ static void ScriptHookRDRDotNet_ManagedInit()
 			else if (data[0] == "ScriptsLocation")
 				scriptPath = data[1];
 		}
-		devConfig = IO::File::Exists(IO::Path::ChangeExtension(Assembly::GetExecutingAssembly()->Location, ".dev"));
 
 		RDR2DN::Log::Message(RDR2DN::Log::Level::Info, "Config loaded from ", IO::Path::ChangeExtension(Assembly::GetExecutingAssembly()->Location, ".ini"));
 
@@ -267,11 +263,8 @@ static void ScriptHookRDRDotNet_ManagedKeyboardMessage(unsigned long keycode, bo
 #include <Windows.h>
 #include <WinBase.h>
 
-
-
 PVOID sGameFiber = nullptr;
 PVOID sScriptFiber = nullptr;
-
 
 static void ScriptMain()
 {

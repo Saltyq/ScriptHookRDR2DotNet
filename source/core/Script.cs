@@ -139,7 +139,7 @@ namespace RDR2DN
 
             unsafe
             {
-                while (firstTime)
+                if (firstTime)
                 {
                     NativeFunc.Invoke(0x4170B650590B3B00, 0.1f, 0.1f);
                     var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", " ");

@@ -218,19 +218,28 @@ namespace RDR2
 
 		#region Entities
 
+
+		/// <summary>
+		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
+		/// </summary>
 		public static Ped[] GetAllPeds()
 		{
 			int[] peds = new int[] {  };
 			RDR2DN.NativeMemory.getAllPeds(peds, 150);
 			return Array.ConvertAll(peds, handle => new Ped(handle));
 		}
+		/// <summary>
+		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
+		/// </summary>
 		public static Vehicle[] GetAllVehicles()
 		{
 			int[] vehs = new int[] { };
 			RDR2DN.NativeMemory.getAllVehicles(vehs, 150);
 			return Array.ConvertAll(vehs, handle => new Vehicle(handle));
 		}
-		
+		/// <summary>
+		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
+		/// </summary>
 		public static Prop[] GetAllProps()
 		{
 			int[] objs = new int[] { };
@@ -275,6 +284,9 @@ namespace RDR2
 			}
 			return (T)closest;
 		}
+		/// <summary>
+		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
+		/// </summary>
 		public static Ped GetClosestPed(Vector3 position, float radius)
 		{
 			int[] peds = new int[] { };
@@ -282,6 +294,9 @@ namespace RDR2
 			Ped[] newPeds = Array.ConvertAll(peds, handle => new Ped(handle));
 			return GetClosest(position, newPeds);
 		}
+		/// <summary>
+		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
+		/// </summary>
 		public static Vehicle GetClosestVehicle(Vector3 position, float radius)
 		{
 			int[] vehs = new int[] { };

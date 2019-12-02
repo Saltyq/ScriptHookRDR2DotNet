@@ -27,11 +27,11 @@ namespace RDR2.UI
 		/// <summary>
 		/// The base width of the screen used for all UI Calculations, unless ScaledDraw is used
 		/// </summary>
-		public const float Width = 1280f;
+		public const float Width = 1920f;
 		/// <summary>
 		/// The base height of the screen used for all UI Calculations
 		/// </summary>
-		public const float Height = 720f;
+		public const float Height = 1080f;
 
 		/// <summary>
 		/// Gets the actual screen resolution the game is being rendered at

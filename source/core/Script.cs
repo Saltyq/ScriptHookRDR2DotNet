@@ -129,6 +129,24 @@ namespace RDR2DN
 			}
 		}
 
+        private void TextPoolInit()
+        {
+            unsafe
+            {
+                if (firstTime)
+                {
+                    for (float i = 0.0f; i < 10.24; i += 0.01f)
+                    {
+                        NativeFunc.Invoke(0x4170B650590B3B00, 0.1f, 0.1f);
+                        NativeFunc.Invoke(0x50A41AD966910F03, 255, 255, 255, 1);
+                        var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", " ");
+                        NativeFunc.Invoke(0xD79334A4BB99BAD1, *res, i, i);
+                    }
+                    firstTime = false;
+                }
+            }
+        }
+
 		/// <summary>
 		/// Starts execution of this script.
 		/// </summary>
@@ -137,16 +155,7 @@ namespace RDR2DN
 			thread = new Thread(new ThreadStart(MainLoop));
 			thread.Start();
 
-            unsafe
-            {
-                if (firstTime)
-                {
-                    NativeFunc.Invoke(0x4170B650590B3B00, 0.1f, 0.1f);
-                    var res = NativeFunc.Invoke(0xFA925AC00EB830B9, 10, "LITERAL_STRING", " ");
-                    NativeFunc.Invoke(0xD79334A4BB99BAD1, *res, 0.0f, 0.0f);
-                    firstTime = false;
-                }
-            }
+            TextPoolInit();
 
             Log.Message(Log.Level.Info, "Started script ", Name, ".");
         }

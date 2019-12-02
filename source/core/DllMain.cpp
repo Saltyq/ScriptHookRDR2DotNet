@@ -1,9 +1,6 @@
+bool sGameReloaded = false;
+
 #pragma managed
-#include <stdio.h>  /* defines FILENAME_MAX */
-#define WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#include<iostream>
 
 // Import C# code base
 #using "ScriptHookRDRDotNet.netmodule"
@@ -22,7 +19,6 @@ namespace WinForms = System::Windows::Forms;
 // There is no version check performed for assemblies without strong names (https://docs.microsoft.com/en-us/dotnet/framework/deployment/how-the-runtime-locates-assemblies)
 [assembly:AssemblyKeyFileAttribute("PublicKeyToken.snk")];
 
-bool sGameReloaded = false;
 
 public ref class ScriptHookRDRDotNet
 {

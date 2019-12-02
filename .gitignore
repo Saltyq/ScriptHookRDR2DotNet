@@ -1,3 +1,34 @@
 
 *.editorconfig
 *.nuspec
+
+# Exclude Generated Folders
+obj/
+[Dd]ebug/
+[Rr]elease/
+packages/
+archive/
+
+# Exclude OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.csproj.user
+ehthumbs.db
+Thumbs.db
+Upgrade*.htm
+
+# Exclude log and dump files
+*.log
+*.sqlite
+.vs/
+/.vs
+
+# Exclude Jetbrains folders for Rider users
+**/.idea/
+**/.idea/*
+
+# Exclude Resharper user-defined settings
+*.sln.DotSettings.user

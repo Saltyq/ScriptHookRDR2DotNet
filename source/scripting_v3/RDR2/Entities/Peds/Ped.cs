@@ -17,7 +17,7 @@ namespace RDR2
 		NaturalMotion.Euphoria _euphoria;
 		WeaponCollection _weapons;
 
-		
+
 		#endregion
 
 		public Ped(int handle) : base(handle)
@@ -39,7 +39,10 @@ namespace RDR2
 		}*/
 
 		#region Styling
-
+		public float Scale
+		{
+			set => Function.Call((Hash)0x25ACFC650B65C538, Handle, value);
+		}
 		public bool IsHuman => Function.Call<bool>(Hash.IS_PED_HUMAN, Handle);
 
 		public bool IsCuffed => Function.Call<bool>(Hash.IS_PED_CUFFED, Handle);
@@ -58,8 +61,7 @@ namespace RDR2
 
 		public float Sweat
 		{
-			set
-			{
+			set {
 				if (value < 0)
 				{
 					value = 0;
@@ -87,6 +89,11 @@ namespace RDR2
 		{
 			Function.Call(Hash.SET_PED_DEFAULT_COMPONENT_VARIATION, Handle);
 		}*/
+
+		public int Outfit
+		{
+			set => Function.Call((Hash)0x77FF8D35EEC6BBC4, Handle, value, 0);
+		}
 
 		#endregion
 
@@ -116,7 +123,7 @@ namespace RDR2
 			Function.Call(Hash.SET_PED_RESET_FLAG, Handle, flagID, true);
 		}
 
-		/*public int GetBoneIndex(Bone BoneID)
+		public int GetBoneIndex(Bone BoneID)
 		{
 			return Function.Call<int>(Hash.GET_PED_BONE_INDEX, Handle, (int)BoneID);
 		}
@@ -128,7 +135,7 @@ namespace RDR2
 		public Vector3 GetBoneCoord(Bone BoneID, Vector3 Offset)
 		{
 			return Function.Call<Vector3>(Hash.GET_PED_BONE_COORDS, Handle, (int)BoneID, Offset.X, Offset.Y, Offset.Z);
-		}*/
+		}
 
 		#endregion
 
@@ -161,7 +168,9 @@ namespace RDR2
 		public bool IsSwimming => Function.Call<bool>(Hash.IS_PED_SWIMMING, Handle);
 
 		public bool IsSwimmingUnderWater => Function.Call<bool>(Hash.IS_PED_SWIMMING_UNDER_WATER, Handle);
-		
+
+		public bool IsOnMount => Function.Call<bool>(Hash.IS_PED_ON_MOUNT, Handle);
+
 
 		public bool IsHeadtracking(Entity entity)
 		{
@@ -216,12 +225,18 @@ namespace RDR2
 			set => Function.Call(Hash.SET_PED_FIRING_PATTERN, Handle, (int)value);
 		}*/ // firing patterns
 
-		public WeaponCollection Weapons => _weapons ?? (_weapons = new WeaponCollection(this));
+		public WeaponCollection Weapons => _weapons ??= new WeaponCollection(this);
 
 		/*public bool CanSwitchWeapons
 		{
 			set => Function.Call(Hash.SET_PED_CAN_SWITCH_WEAPON, Handle, value);
 		}*/
+
+		public void GiveWeapon(WeaponHash weapon, int ammoCount, bool equipNow = false, bool isLeftHanded = false, float condition = 0.0f)
+		{
+			Function.Call((Hash)0x5E3BDDBCB83F3D84, Handle, (uint)weapon, ammoCount, equipNow, true, 1, false,
+				1056964608, 1065353216, isLeftHanded, condition);
+		}
 
 		#endregion
 
@@ -236,10 +251,10 @@ namespace RDR2
 
 		public bool IsGettingIntoAVehicle => Function.Call<bool>(Hash.IS_PED_GETTING_INTO_A_VEHICLE, Handle);
 
-        public bool IsOnHorse => Function.Call<bool>(Hash.IS_PED_ON_MOUNT, Handle);
+		public bool IsOnHorse => Function.Call<bool>(Hash.IS_PED_ON_MOUNT, Handle);
 
-        public Ped CurrentMount => Function.Call<Ped>(Hash.GET_MOUNT, Handle);
-        
+		public Ped CurrentMount => Function.Call<Ped>(Hash.GET_MOUNT, Handle);
+
 		public bool CanBeKnockedOffBike
 		{
 			set => Function.Call(Hash.SET_PED_CAN_BE_KNOCKED_OFF_VEHICLE, Handle, value);
@@ -418,7 +433,7 @@ namespace RDR2
 
 		public void ApplyDamage(int damageAmount)
 		{
-			Function.Call(Hash.APPLY_DAMAGE_TO_PED, Handle, damageAmount, 0,0,0);
+			Function.Call(Hash.APPLY_DAMAGE_TO_PED, Handle, damageAmount, 0, 0, 0);
 		}
 
 		public Vector3 GetLastWeaponImpactCoords()
@@ -498,5 +513,104 @@ namespace RDR2
 		}*/
 
 		#endregion
+
+		#region Cores
+		public int HealthCore
+		{
+			get => GetCoreValue(PedCore.Health);
+			set => SetCoreValue(PedCore.Health, value);
+		}
+
+		public int HealthCoreRank
+		{
+			get => GetCoreRank(PedCore.Health);
+			set => SetCoreRank(PedCore.Health, value);
+		}
+
+		public int StaminaCore
+		{
+			get => GetCoreValue(PedCore.Stamina);
+			set => SetCoreValue(PedCore.Stamina, value);
+		}
+
+		public int StaminaCoreRank
+		{
+			get => GetCoreRank(PedCore.Stamina);
+			set => SetCoreRank(PedCore.Stamina, value);
+		}
+
+		public int DeadEyeCore
+		{
+			get => GetCoreValue(PedCore.DeadEye);
+			set => SetCoreValue(PedCore.DeadEye, value);
+		}
+
+		public int DeadEyeRank
+		{
+			get => GetCoreRank(PedCore.DeadEye);
+			set => SetCoreRank(PedCore.DeadEye, value);
+		}
+
+		public int GetCoreValue(PedCore core)
+		{
+			return Function.Call<int>((Hash)0x36731AC041289BB1, Handle, (int)core);
+		}
+
+		public void SetCoreValue(PedCore core, int value)
+		{
+			Function.Call((Hash)0xc6258f41d86676e0, Handle, (int)core, value);
+		}
+
+		public int GetCoreRank(PedCore core)
+		{
+			return Function.Call<int>(Hash.GET_ATTRIBUTE_RANK, Handle, (int)core);
+		}
+
+		public void SetCoreRank(PedCore core, int level)
+		{
+			Function.Call(Hash.SET_ATTRIBUTE_POINTS, GetExperienceByRank(level));
+		}
+
+		private static int GetExperienceByRank(int level)
+		{
+			switch (level)
+			{
+				case -1:
+					return -1;
+				case 0:
+					return 0;
+
+				case 1:
+					return 50;
+
+				case 2:
+					return 100;
+
+				case 3:
+					return 200;
+
+				case 4:
+					return 350;
+
+				case 5:
+					return 550;
+
+				case 6:
+					return 800;
+
+				case 7:
+					return 1100;
+
+				default:
+					return 0;
+			}
+		}
+		#endregion
+	}
+	public enum PedCore
+	{
+		Health = 0,
+		Stamina,
+		DeadEye
 	}
 }

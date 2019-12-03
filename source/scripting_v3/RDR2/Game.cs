@@ -4,7 +4,6 @@
 //
 
 using RDR2.Native;
-using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -12,7 +11,7 @@ namespace RDR2
 {
 	public static class Game
 	{
-		static Player cachedPlayer = null;
+		static Player _cachedPlayer;
 
 
 		public static float FPS => 1.0f / LastFrameTime;
@@ -20,8 +19,7 @@ namespace RDR2
 
 		public static Size ScreenResolution
 		{
-			get
-			{
+			get {
 				int w, h;
 				unsafe { Function.Call(Hash.GET_SCREEN_RESOLUTION, &w, &h); }
 				return new Size(w, h);
@@ -30,16 +28,15 @@ namespace RDR2
 
 		public static Player Player
 		{
-			get
-			{
+			get {
 				int handle = Function.Call<int>(Hash.PLAYER_ID);
 
-				if (cachedPlayer == null || handle != cachedPlayer.Handle)
+				if (_cachedPlayer == null || handle != _cachedPlayer.Handle)
 				{
-					cachedPlayer = new Player(handle);
+					_cachedPlayer = new Player(handle);
 				}
 
-				return cachedPlayer;
+				return _cachedPlayer;
 			}
 		}
 
@@ -83,7 +80,7 @@ namespace RDR2
 		public static bool IsWaypointActive => Function.Call<bool>(Hash.IS_WAYPOINT_ACTIVE);
 
 
-		
+
 
 		public static int GameTime => Function.Call<int>(Hash.GET_GAME_TIMER);
 		public static int FrameCount => Function.Call<int>(Hash.GET_FRAME_COUNT);
@@ -100,8 +97,7 @@ namespace RDR2
 		public static int MaxWantedLevel
 		{
 			get => Function.Call<int>(Hash.GET_MAX_WANTED_LEVEL);
-			set
-			{
+			set {
 				if (value < 0)
 				{
 					value = 0;
@@ -217,12 +213,12 @@ namespace RDR2
 		{
 			return Function.Call<bool>(Hash.IS_CONTROL_ENABLED, index, (int)control);
 		}
-		
+
 		public static void EnableControlThisFrame(int index, Control control)
 		{
 			Function.Call(Hash.ENABLE_CONTROL_ACTION, index, (int)control, true);
 		}
-	
+
 		public static void DisableControlThisFrame(int index, Control control)
 		{
 			Function.Call(Hash.DISABLE_CONTROL_ACTION, index, (int)control, true);
@@ -255,6 +251,11 @@ namespace RDR2
 		public static string GetGXTEntry(string entry)
 		{
 			return Function.Call<string>(Hash._GET_LABEL_TEXT, entry);
+		}
+
+		public static bool DoesGXTEntryExist(string entry)
+		{
+			return Function.Call<bool>(Hash.DOES_TEXT_LABEL_EXIST, entry);
 		}
 	}
 }

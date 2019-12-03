@@ -7,15 +7,13 @@ using RDR2.Native;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace RDR2.UI
 {
 	/// <summary>
 	/// A sprite element using a built-in texture.
 	/// </summary>
-	/*public class Sprite : ISpriteElement, IDisposable
+	public class Sprite : ISpriteElement, IDisposable
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Sprite"/> class used for drawing in game textures on the screen.
@@ -65,12 +63,8 @@ namespace RDR2.UI
 		/// <param name="centered">Position the <see cref="Sprite"/> based on its center instead of top left corner, see also <seealso cref="Centered"/>.</param>
 		public Sprite(string textureDict, string textureName, SizeF size, PointF position, Color color, float rotation, bool centered)
 		{
-			byte[] data = Encoding.UTF8.GetBytes(textureDict + "\0");
-			_pinnedDict = Marshal.AllocCoTaskMem(data.Length);
-			Marshal.Copy(data, 0, _pinnedDict, data.Length);
-			data = Encoding.UTF8.GetBytes(textureName + "\0");
-			_pinnedName = Marshal.AllocCoTaskMem(data.Length);
-			Marshal.Copy(data, 0, _pinnedName, data.Length);
+			_pinnedDict = textureDict;
+			_pinnedName = textureName;
 
 			_textureDict = textureDict;
 			_textureName = textureName;
@@ -97,7 +91,7 @@ namespace RDR2.UI
 		#region Fields
 		private readonly string _textureDict, _textureName;
 		private static readonly Dictionary<string, int> _activeTextures = new Dictionary<string, int>();
-		private readonly IntPtr _pinnedDict, _pinnedName;
+		private readonly string _pinnedDict, _pinnedName;
 		#endregion
 
 		public void Dispose()
@@ -128,9 +122,6 @@ namespace RDR2.UI
 					// In practice this should never get executed
 					Function.Call(Hash.SET_STREAMED_TEXTURE_DICT_AS_NO_LONGER_NEEDED, _pinnedDict);
 				}
-
-				Marshal.FreeCoTaskMem(_pinnedDict);
-				Marshal.FreeCoTaskMem(_pinnedName);
 			}
 		}
 
@@ -253,5 +244,5 @@ namespace RDR2.UI
 
 			Function.Call(Hash.DRAW_SPRITE, _pinnedDict, _pinnedName, positionX, positionY, scaleX, scaleY, Rotation, Color.R, Color.G, Color.B, Color.A);
 		}
-	}*/
+	}
 }

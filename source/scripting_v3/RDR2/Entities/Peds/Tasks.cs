@@ -38,17 +38,14 @@ namespace RDR2
 		{
 			Function.Call(Hash.TASK_ARREST_PED, _ped.Handle, ped.Handle);
 		}
-		/*public void ChatTo(Ped ped)
-		{
-			Function.Call(Hash.TASK_CHAT_TO_PED, _ped.Handle, ped.Handle, 16, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-		}*/
+
 		public void Climb()
 		{
 			Function.Call(Hash.TASK_CLIMB, _ped.Handle, true);
 		}
 		public void Cower(int duration)
 		{
-			Function.Call(Hash.TASK_COWER, _ped.Handle, duration,0,0);
+			Function.Call(Hash.TASK_COWER, _ped.Handle, duration, 0, 0);
 		}
 		public void CruiseWithVehicle(Vehicle vehicle, float speed)
 		{
@@ -221,36 +218,46 @@ namespace RDR2
 
 			Function.Call(Hash.TASK_PERFORM_SEQUENCE, _ped.Handle, sequence.Handle);
 		}
-		/*public void PlayAnimation(string animDict, string animName, float speed, int duration, bool loop, float playbackRate)
-		{
-			PlayAnimation(animDict, animName, speed, -8.0f, duration, loop ? AnimationFlags.Loop : AnimationFlags.None, playbackRate);
-		}
+
 		public void PlayAnimation(string animDict, string animName)
 		{
-			PlayAnimation(animDict, animName, 8.0f, -8.0f, -1, AnimationFlags.None, 0.0f);
+			PlayAnimation(animDict, animName, 8f, -8f, -1, AnimationFlags.None, 0f);
+		}
+		public void PlayAnimation(string animDict, string animName, float speed, int duration, float playbackRate)
+		{
+			PlayAnimation(animDict, animName, speed, -speed, duration, AnimationFlags.None, playbackRate);
 		}
 		public void PlayAnimation(string animDict, string animName, float blendInSpeed, int duration, AnimationFlags flags)
 		{
-			PlayAnimation(animDict, animName, blendInSpeed, -8.0f, duration, flags, 0.0f);
+			PlayAnimation(animDict, animName, blendInSpeed, -8f, duration, flags, 0f);
 		}
-		public void PlayAnimation(string animDict, string animName, float blendInSpeed, float blendOutSpeed, int duration, AnimationFlags flags, float playbackRate)
+
+		public void PlayAnimation(string animDict, string animName, float blendInSpeed, float blendOutSpeed, int duration,
+			AnimationFlags flags, float playbackRate, float timeout = 1000f)
 		{
-			Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
+			if (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
+			{
+				Function.Call(Hash.REQUEST_ANIM_DICT, animDict);
+			}
 
-			var endtime = DateTime.UtcNow + new TimeSpan(0, 0, 0, 0, 1000);
-
+			var end = DateTime.UtcNow.AddMilliseconds(timeout);
 			while (!Function.Call<bool>(Hash.HAS_ANIM_DICT_LOADED, animDict))
 			{
-				Script.Yield();
-
-				if (DateTime.UtcNow >= endtime)
+				if (DateTime.UtcNow >= end)
 				{
 					return;
 				}
 			}
 
-			Function.Call(Hash.TASK_PLAY_ANIM, _ped.Handle, animDict, animName, blendInSpeed, blendOutSpeed, duration, (int)(flags), playbackRate, 0, 0, 0);
-		}*/
+			Function.Call(Hash.TASK_PLAY_ANIM, _ped.Handle, animDict, animName, blendInSpeed, blendOutSpeed,
+				duration, (int)flags, playbackRate, false, false, false);
+		}
+
+		public void ClearAnimation(string animDict, string animName, float blendOutSpeed = -8f)
+		{
+			Function.Call(Hash.STOP_ANIM_TASK, _ped.Handle, animDict, animName, blendOutSpeed);
+		}
+
 		public void ReactToEvent()
 		{
 			Function.Call(Hash.TASK_REACT, _ped.Handle);
@@ -272,7 +279,7 @@ namespace RDR2
 			if (ignorePaths)
 			{
 				Function.Call(Hash.TASK_GO_STRAIGHT_TO_COORD, _ped.Handle, position.X, position.Y, position.Z, 1.0f, timeout, 0.0f, 0.0f, 0);
-            }
+			}
 			else
 			{
 				Function.Call(Hash.TASK_FOLLOW_NAV_MESH_TO_COORD, _ped.Handle, position.X, position.Y, position.Z, 4.0f, timeout, 0.0f, 0, 0.0f);
@@ -318,18 +325,11 @@ namespace RDR2
 		{
 			Function.Call(Hash._TASK_START_SCENARIO_IN_PLACE, _ped.Handle, name, 0, 1);
 		}
-		/*public void StartScenario(string name, Vector3 position)
+		public void StartScenarioInPlace(string scenario, bool playEnterAnim = true, int p4 = -1082130432)
 		{
-			StartScenario(name, position, 0.0f);
+			Function.Call(Hash._TASK_START_SCENARIO_IN_PLACE, _ped.Handle, Game.GenerateHash(scenario), -1, playEnterAnim, false, p4, false);
 		}
-		public void StartScenario(string name, Vector3 position, float heading)
-		{
-			Function.Call(Hash.TASK_START_SCENARIO_AT_POSITION, _ped.Handle, name, position.X, position.Y, position.Z, heading, 0, 0, 1);
-		}*/ //scenarios 
-		/*public void SwapWeapon()
-		{
-			Function.Call(Hash.TASK_SWAP_WEAPON, _ped.Handle, false);
-		}*/ // unknown native args
+
 		public void TurnTo(Entity target)
 		{
 			TurnTo(target, -1);
@@ -387,9 +387,166 @@ namespace RDR2
 		{
 			Function.Call(Hash.CLEAR_PED_SECONDARY_TASK, _ped.Handle);
 		}
-		public void ClearAnimation(string animSet, string animName)
+
+		public void Whistle()
 		{
-			Function.Call(Hash.STOP_ANIM_TASK, _ped.Handle, animSet, animName, -4.0f);
+			Function.Call((Hash)0xD6401A1B2F63BED6, _ped.Handle, 869278708, 1971704925);
 		}
+
+		public void HandsUp(int duration, Ped facingPed)
+		{
+			Function.Call(Hash.TASK_HANDS_UP, _ped.Handle, duration, facingPed == null ? 0 : facingPed.Handle, -1, false);
+		}
+
+		public void KnockOut(float angle, bool immediately)
+		{
+			Function.Call((Hash)0xF90427F00A495A28, _ped.Handle, angle, immediately);
+		}
+
+		public void KnockOutAndHogtied(float angle, bool immediately)
+		{
+			Function.Call((Hash)0x42AC6401ABB8C7E5, _ped.Handle, angle, immediately);
+		}
+
+		public void Combat(Ped target)
+		{
+			Function.Call(Hash.TASK_COMBAT_PED, _ped.Handle, target.Handle, 0, 0);
+		}
+
+		public void ReviveTarget(Ped target)
+		{
+			Function.Call((Hash)0x356088527D9EBAAD, _ped.Handle, target.Handle, -1516555556);
+		}
+
+		public void SeekCoverFrom(Ped target, int duration)
+		{
+			Function.Call(Hash.TASK_SEEK_COVER_FROM_PED, _ped.Handle, target.Handle, duration,
+				false, false, false);
+		}
+
+		public void SeekCoverFrom(Vector3 pos, int duration)
+		{
+			Function.Call(Hash.TASK_SEEK_COVER_FROM_POS, _ped.Handle, pos.X, pos.Y, pos.Z, duration,
+				false, false, false);
+		}
+
+		public void StandGuard(Vector3 pos = default)
+		{
+			pos = pos == default ? _ped.Position : pos;
+			Function.Call(Hash.TASK_STAND_GUARD, _ped.Handle, pos.X, pos.Y, pos.Z, _ped.Heading, "DEFEND");
+		}
+
+		public void Rob(Ped target, int duration, int flag = 18)
+		{
+			Function.Call((Hash)0x7BB967F85D8CCBDB, _ped.Handle, target.Handle, flag, duration);
+		}
+
+		public void Flock()
+		{
+			Function.Call((Hash)0xE0961AED72642B80, _ped.Handle);
+		}
+
+		public void Duck(int duration)
+		{
+			Function.Call((Hash)0xA14B5FBF986BAC23, _ped.Handle, duration);
+		}
+
+		public void EnterCover()
+		{
+			Function.Call((Hash)0x4972A022AE6DAFA1, _ped.Handle);
+		}
+
+		public void ExitCover()
+		{
+			Function.Call((Hash)0x2BC4A6D92D140112, _ped.Handle);
+		}
+
+		public void EnterTransport()
+		{
+			Function.Call((Hash)0xAEE3ADD08829CB6F, _ped.Handle);
+		}
+
+		public void ExitVehicle(Vehicle vehicle, LeaveVehicleFlags flag = LeaveVehicleFlags.None)
+		{
+			Function.Call((Hash)0xD3DBCE61A490BE02, _ped.Handle, vehicle.Handle, (int)flag);
+		}
+
+		public void MountAnimal(Ped animal, int timeout = -1)
+		{
+			Function.Call((Hash)0x92DB0739813C5186, _ped.Handle, animal.Handle, timeout, -1, 2f, 1, 0, 0);
+		}
+
+		public void DismountAnimal(Ped animal)
+		{
+			Function.Call((Hash)0x48E92D3DDE23C23A, _ped.Handle, animal.Handle, 0, 0, 0, 0);
+		}
+
+		public void HitchAnimal(Ped animal, int flag = 0)
+		{
+			Function.Call((Hash)0x9030AD4B6207BFE8, _ped.Handle, animal.Handle, flag);
+		}
+
+		public void DriveToCoord(Vehicle vehicle, Vector3 pos, float speed, float radius = 6f, VehicleDrivingFlags drivingMode = VehicleDrivingFlags.Default)
+		{
+			Function.Call(Hash.TASK_VEHICLE_DRIVE_TO_COORD, _ped.Handle, vehicle.Handle, pos.X, pos.Y, pos.Z, speed,
+				radius, vehicle.Model.Hash, (int)drivingMode);
+		}
+
+		public void FollowToEntity(Entity entity, float speed, Vector3 offset = default, int timeout = -1, float stoppingRange = 3f, bool keepFollowing = true)
+		{
+			Function.Call(Hash.TASK_FOLLOW_TO_OFFSET_OF_ENTITY, _ped.Handle, entity.Handle, offset.X, offset.Y,
+				offset.Z, speed, timeout, stoppingRange, keepFollowing);
+		}
+
+		public void GoToWhistle(Entity target, int flag = 3)
+		{
+			Function.Call((Hash)0xBAD6545608CECA6E, _ped.Handle, target.Handle, flag);
+		}
+
+		public void LeadHorse(Ped horse)
+		{
+			Function.Call((Hash)0x9A7A4A54596FE09D, _ped.Handle, horse.Handle);
+		}
+
+		public void FlyAway(Entity awayFrom = null)
+		{
+			Function.Call((Hash)0xE86A537B5A3C297C, awayFrom == null ? 0 : awayFrom.Handle);
+		}
+
+		public void WalkAway(Entity awayFrom = null)
+		{
+			Function.Call((Hash)0x04ACFAC71E6858F9, awayFrom == null ? 0 : awayFrom.Handle);
+		}
+
+		public void ReactToShockingEvent()
+		{
+			Function.Call((Hash)0x452419CBD838065B, 0, _ped.Handle, 0);
+		}
+
+		public void ReactTo(Entity target, EventReaction reaction, float p2 = 7.5f, float p3 = 0f, int flag = 4)
+		{
+			Function.Call((Hash)0xC4C32C31920E1B70, _ped.Handle, target.Handle, (int)reaction, p2, p3, flag);
+		}
+		public void HuntAnimal(Ped target)
+		{
+			Function.Call((Hash)0x4B39D8F9D0FE7749, target.Handle, _ped.Handle, 1);
+		}
+	}
+
+	public enum EventReaction
+	{
+		TaskCombatHigh = 1103872808,
+		TaskCombatMedium = 623557147,
+		TaskCombatReact = -1342511871,
+		TaskCombatPanic = -996719768,
+		DefaultShocked = -372548123,
+		DefaultPanic = 1618376518,
+		DefaultCurious = -1778605437,
+		DefaultBrave = 1781933509,
+		DefaultAngry = 1345150177,
+		DefaultDefuse = -1675652957,
+		DefaultScared = -1967172690,
+		FleeHumanMajorThreat = -2111647205,
+		FleeScared = 759577278
 	}
 }

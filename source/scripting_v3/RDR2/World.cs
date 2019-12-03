@@ -6,7 +6,6 @@
 using RDR2.Math;
 using RDR2.Native;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 
@@ -15,20 +14,6 @@ namespace RDR2
 	public static class World
 	{
 		#region Fields
-		static readonly string[] weatherNames = {
-			"CLEAR",
-			"CLOUDS",
-			"SMOG",
-			"FOGGY",
-			"OVERCAST",
-			"RAIN",
-			"THUNDER",
-			"CLEARING",
-			"NEUTRAL",
-			"SNOW",
-			"SNOWLIGHT",
-		};
-
 		static readonly GregorianCalendar calendar = new GregorianCalendar();
 		#endregion
 
@@ -36,8 +21,7 @@ namespace RDR2
 
 		public static DateTime CurrentDate
 		{
-			get
-			{
+			get {
 				int year = Function.Call<int>(Hash.GET_CLOCK_YEAR);
 				int month = Function.Call<int>(Hash.GET_CLOCK_MONTH);
 				int day = System.Math.Min(Function.Call<int>(Hash.GET_CLOCK_DAY_OF_MONTH), calendar.GetDaysInMonth(year, month));
@@ -47,8 +31,7 @@ namespace RDR2
 
 				return new DateTime(year, month, day, hour, minute, second);
 			}
-			set
-			{
+			set {
 				Function.Call(Hash.SET_CLOCK_DATE, value.Year, value.Month, value.Day);
 				Function.Call(Hash.SET_CLOCK_TIME, value.Hour, value.Minute, value.Second);
 			}
@@ -56,8 +39,7 @@ namespace RDR2
 
 		public static TimeSpan CurrentDayTime
 		{
-			get
-			{
+			get {
 				int hours = Function.Call<int>(Hash.GET_CLOCK_HOURS);
 				int minutes = Function.Call<int>(Hash.GET_CLOCK_MINUTES);
 				int seconds = Function.Call<int>(Hash.GET_CLOCK_SECONDS);
@@ -72,69 +54,45 @@ namespace RDR2
 		#region Weather & Effects
 
 
-		/*public static Weather Weather
+		private static WeatherType _currentWeather;
+		public static WeatherType CurrentWeather
 		{
-			get
-			{
-				for (int i = 0; i < weatherNames.Length; i++)
-				{
-					if (Function.Call<int>(Hash._GET_CURRENT_WEATHER_TYPE) == Game.GenerateHash(weatherNames[i]))
-					{
-						return (Weather)i;
-					}
-				}
-
-				return Weather.Unknown;
-			}
-			set
-			{
-				if (Enum.IsDefined(typeof(Weather), value) && value != Weather.Unknown)
-				{
-					Function.Call(Hash.SET_WEATHER_TYPE_NOW, weatherNames[(int)value]);
-				}
-			}
-		}
-		public static Weather NextWeather
-		{
-			get
-			{
-				for (int i = 0; i < weatherNames.Length; i++)
-				{
-					if (Function.Call<bool>(Hash.IS_NEXT_WEATHER_TYPE, weatherNames[i]))
-					{
-						return (Weather)i;
-					}
-				}
-
-				return Weather.Unknown;
-			}
-			set
-			{
-				if (Enum.IsDefined(typeof(Weather), value) && value != Weather.Unknown)
-				{
-					int currentWeatherHash, nextWeatherHash;
-					float weatherTransition;
-					unsafe
-					{
-						Function.Call(Hash._GET_WEATHER_TYPE_TRANSITION, &currentWeatherHash, &nextWeatherHash, &weatherTransition);
-					}
-					Function.Call(Hash._SET_WEATHER_TYPE_TRANSITION, currentWeatherHash, Game.GenerateHash(weatherNames[(int)value]), 0.0f);
-				}
+			get => GetCurrentWeatherType();
+			set {
+				_currentWeather = value;
+				Function.Call(Hash._SET_WEATHER_TYPE_TRANSITION, (uint)GetCurrentWeatherType(), (uint)value, 1f);
 			}
 		}
 
-		public static void TransitionToWeather(Weather value, float duration)
+		private static WeatherType _nextWeather;
+		public static WeatherType NextWeather
 		{
-			if (Enum.IsDefined(value.GetType(), value) && value != Weather.Unknown)
-			{
-				Function.Call(Hash._SET_WEATHER_TYPE_OVER_TIME, weatherNames[(int)value], duration);
+			get {
+				GetCurrentWeatherType();
+				return _nextWeather;
 			}
 		}
+
+		private static WeatherType GetCurrentWeatherType()
+		{
+			var currentWeather = new OutputArgument();
+			var nextWeather = new OutputArgument();
+			var percent = new OutputArgument();
+			Function.Call(Hash._GET_WEATHER_TYPE_TRANSITION, currentWeather, nextWeather, percent);
+			_currentWeather = currentWeather.GetResult<WeatherType>();
+			_nextWeather = nextWeather.GetResult<WeatherType>();
+			var pct = percent.GetResult<float>();
+			if (pct >= 0.5f)
+			{
+				return _nextWeather;
+			}
+			return _currentWeather;
+		}
+
 
 		public static float WeatherTransition
 		{
-			get
-			{
+			get {
 				int currentWeatherHash, nextWeatherHash;
 				float weatherTransition;
 				unsafe
@@ -146,6 +104,7 @@ namespace RDR2
 			set => Function.Call(Hash._SET_WEATHER_TYPE_TRANSITION, 0, 0, value);
 		}
 
+		/*
 		public static int GravityLevel
 		{
 			set => Function.Call(Hash.SET_GRAVITY_LEVEL, value);
@@ -154,66 +113,15 @@ namespace RDR2
 		#endregion
 
 		#region Blips
+		public static bool IsWaypointActive => Function.Call<bool>((Hash)0x202B1BBFC6AB5EE4);
 
-		/*public static Vector3 GetWaypointPosition()
+		public static Vector3 WaypointPosition => Function.Call<Vector3>((Hash)0x29B30D07C3F7873B);
+
+		public static Blip CreateBlip(Vector3 position, BlipType type)
 		{
-			if (!Game.IsWaypointActive)
-			{
-				return Vector3.Zero;
-			}
-
-			bool blipFound = false;
-			Vector3 position = Vector3.Zero;
-
-			int it = Function.Call<int>(Hash._GET_BLIP_INFO_ID_ITERATOR);
-			for (int i = Function.Call<int>(Hash.GET_FIRST_BLIP_INFO_ID, it); Function.Call<bool>(Hash.DOES_BLIP_EXIST, i); i = Function.Call<int>(Hash.GET_NEXT_BLIP_INFO_ID, it))
-			{
-				if (Function.Call<int>(Hash.GET_BLIP_INFO_ID_TYPE, i) == 4)
-				{
-					position = Function.Call<Vector3>(Hash.GET_BLIP_INFO_ID_COORD, i);
-					blipFound = true;
-					break;
-				}
-			}
-
-			if (blipFound)
-			{
-				bool groundFound = false;
-				float height = 0.0f;
-
-				for (int i = 800; i >= 0; i -= 50)
-				{
-					unsafe
-					{
-						if (Function.Call<bool>(Hash.GET_GROUND_Z_FOR_3D_COORD, position.X, position.Y, (float)i, &height))
-						{
-							groundFound = true;
-							position.Z = height;
-							break;
-						}
-					}
-
-					Script.Wait(100);
-				}
-
-				if (!groundFound)
-				{
-					position.Z = 1000.0f;
-				}
-			}
-
-			return position;
+			var blip = Function.Call<int>((Hash)0x554D9D53F696D002, (uint)type, position.X, position.Y, position.Z);
+			return new Blip(blip);
 		}
-
-		public static Blip CreateBlip(Vector3 position)
-		{
-			return Function.Call<Blip>(Hash.ADD_BLIP_FOR_COORD, position.X, position.Y, position.Z);
-		}
-		public static Blip CreateBlip(Vector3 position, float radius)
-		{
-			return Function.Call<Blip>(Hash.ADD_BLIP_FOR_RADIUS, position.X, position.Y, position.Z, radius);
-		}*/
-
 		#endregion
 
 		#region Entities
@@ -224,7 +132,7 @@ namespace RDR2
 		/// </summary>
 		public static Ped[] GetAllPeds()
 		{
-			int[] peds = new int[] {  };
+			int[] peds = new int[] { };
 			RDR2DN.NativeMemory.getAllPeds(peds, 150);
 			return Array.ConvertAll(peds, handle => new Ped(handle));
 		}
@@ -246,7 +154,7 @@ namespace RDR2
 			RDR2DN.NativeMemory.getAllObjects(objs, 150);
 			return Array.ConvertAll(objs, handle => new Prop(handle));
 		}
-		
+
 
 		/*public static Blip[] GetActiveBlips()
 		{
@@ -306,20 +214,25 @@ namespace RDR2
 
 		}
 
-		/*public static Ped CreatePed(Model model, Vector3 position)
+		public static Ped CreatePed(PedHash hash, Vector3 position, float heading = 0f, bool isNet = true, bool isMission = true)
 		{
-			return CreatePed(model, position, 0.0f);
-		}
-		public static Ped CreatePed(Model model, Vector3 position, float heading)
-		{
-			if (!model.IsPed || !model.Request(1000))
+			var model = new Model(hash);
+			if (!model.Request(4000))
 			{
 				return null;
 			}
+			var id = Function.Call<int>((Hash)0xD49F9B0955C367DE, (uint)hash, position.X, position.Y, position.Z, heading,
+				isNet, !isMission, 0, 0);
+			Function.Call((Hash)0x283978A15512B2FE, id, true);
+			return id == 0 ? null : (Ped)Entity.FromHandle(id);
+		}
 
-			return Function.Call<Ped>(Hash.CREATE_PED, model.Hash, position.X, position.Y, position.Z, heading, false, false, 0);
-        }*/
-
+		public static Pickup CreatePickup(PickupType type, Vector3 pos)
+		{
+			var handle = Function.Call<int>(Hash.CREATE_PICKUP, (int)type, pos.X, pos.Y, pos.Z, 0f, 0f, 0f, 32770, -1,
+				2, 1, 0, 0);
+			return new Pickup(handle);
+		}
 		#endregion
 
 		#region Cameras
@@ -337,8 +250,7 @@ namespace RDR2
 		public static Camera RenderingCamera
 		{
 			get => new Camera(Function.Call<int>(Hash.GET_RENDERING_CAM));
-			set
-			{
+			set {
 				if (value == null)
 				{
 					Function.Call(Hash.RENDER_SCRIPT_CAMS, false, 0, 3000, 1, 0);
@@ -414,7 +326,7 @@ namespace RDR2
 
 		#region Drawing
 
-		
+
 		public static void DrawLightWithRange(Vector3 position, Color color, float range, float intensity)
 		{
 			Function.Call(Hash.DRAW_LIGHT_WITH_RANGE, position.X, position.Y, position.Z, color.R, color.G, color.B, range, intensity);
@@ -423,47 +335,30 @@ namespace RDR2
 		#endregion
 
 		#region Raycasting
-
-		/*public static RaycastResult Raycast(Vector3 source, Vector3 target, IntersectOptions options)
+		public static RaycastResult Raycast(Vector3 source, Vector3 target, IntersectOptions options, Entity ignoreEntity = null)
 		{
-			return Raycast(source, target, options, null);
-		}
-		public static RaycastResult Raycast(Vector3 source, Vector3 target, IntersectOptions options, Entity ignoreEntity)
-		{
-			return new RaycastResult(Function.Call<int>(Hash._CAST_RAY_POINT_TO_POINT, source.X, source.Y, source.Z, target.X, target.Y, target.Z, (int)options, ignoreEntity == null ? 0 : ignoreEntity.Handle, 7));
-		}
-		public static RaycastResult Raycast(Vector3 source, Vector3 direction, float maxDistance, IntersectOptions options)
-		{
-			return Raycast(source, direction, maxDistance, options, null);
-		}
-		public static RaycastResult Raycast(Vector3 source, Vector3 direction, float maxDistance, IntersectOptions options, Entity ignoreEntity)
-		{
-			Vector3 target = source + (direction * maxDistance);
-			return new RaycastResult(Function.Call<int>(Hash._CAST_RAY_POINT_TO_POINT, source.X, source.Y, source.Z, target.X, target.Y, target.Z, (int)options, ignoreEntity == null ? 0 : ignoreEntity.Handle, 7));
-		}
-		public static RaycastResult RaycastCapsule(Vector3 source, Vector3 target, float radius, IntersectOptions options)
-		{
-			return RaycastCapsule(source, target, radius, options, null);
-		}
-		public static RaycastResult RaycastCapsule(Vector3 source, Vector3 target, float radius, IntersectOptions options, Entity ignoreEntity)
-		{
-			return new RaycastResult(Function.Call<int>(Hash._CAST_3D_RAY_POINT_TO_POINT, source.X, source.Y, source.Z, target.X, target.Y, target.Z, radius, (int)options, ignoreEntity == null ? 0 : ignoreEntity.Handle, 7));
-		}
-		public static RaycastResult RaycastCapsule(Vector3 source, Vector3 direction, float maxDistance, float radius, IntersectOptions options)
-		{
-			return RaycastCapsule(source, direction, maxDistance, radius, options, null);
-		}
-		public static RaycastResult RaycastCapsule(Vector3 source, Vector3 direction, float maxDistance, float radius, IntersectOptions options, Entity ignoreEntity)
-		{
-			Vector3 target = source + (direction * maxDistance);
-			return new RaycastResult(Function.Call<int>(Hash._CAST_3D_RAY_POINT_TO_POINT, source.X, source.Y, source.Z, target.X, target.Y, target.Z, radius, (int)options, ignoreEntity == null ? 0 : ignoreEntity.Handle, 7));
+			return new RaycastResult(Function.Call<int>(Hash._START_SHAPE_TEST_RAY, source.X, source.Y, source.Z,
+				target.X, target.Y, target.Z, (int)options, ignoreEntity == null ? 0 : ignoreEntity.Handle, 7));
 		}
 
-		public static RaycastResult GetCrosshairCoordinates()
+		public static RaycastResult Raycast(Vector3 source, Vector3 direction, float maxDist, IntersectOptions options, Entity ignoreEntity = null)
 		{
-			return Raycast(GameplayCamera.Position, GameplayCamera.Direction, 1000.0f, IntersectOptions.Everything);
-		}*/
+			var target = source + direction * maxDist;
+			return new RaycastResult(Function.Call<int>(Hash._START_SHAPE_TEST_RAY, source.X, source.Y, source.Z,
+				target.X, target.Y, target.Z, (int)options, ignoreEntity == null ? 0 : ignoreEntity.Handle, 7));
+		}
 
+		public static RaycastResult CrosshairRaycast(float maxDist, IntersectOptions options, Entity ignoreEntity = null)
+		{
+			var source = GameplayCamera.Position;
+			var rotation = (float)(System.Math.PI / 180.0) * GameplayCamera.Rotation;
+			var forward = Vector3.Normalize(new Vector3(
+				(float)-System.Math.Sin(rotation.Z) * (float)System.Math.Abs(System.Math.Cos(rotation.X)),
+				(float)System.Math.Cos(rotation.Z) * (float)System.Math.Abs(System.Math.Cos(rotation.X)),
+				(float)System.Math.Sin(rotation.X)));
+			var target = source + forward * maxDist;
+			return Raycast(source, target, options, ignoreEntity);
+		}
 		#endregion
 
 		#region Positioning
@@ -532,7 +427,7 @@ namespace RDR2
 				{
 					Function.Call(Hash.GET_NTH_CLOSEST_VEHICLE_NODE, position.X, position.Y, position.Z, i, outPos, 1, 0x40400000, 0);
 					Vector3 newPos = outPos.GetResult<Vector3>();
-                    return newPos;
+					return newPos;
 					/*if (!Function.Call<bool>(Hash.IS_POINT_OBSCURED_BY_A_MISSION_ENTITY, newPos.X, newPos.Y, newPos.Z, 5.0f, 5.0f, 5.0f, 0))
 					{
 						return newPos;
@@ -571,5 +466,31 @@ namespace RDR2
 
 
 		#endregion
+	}
+
+	public enum WeatherType : uint
+	{
+		Overcast = 0xBB898D2D,
+		Rain = 0x54A69840,
+		Fog = 0xD61BDE01,
+		Snowlight = 0x23FB812B,
+		Thunder = 0xB677829F,
+		Blizzard = 0x27EA2814,
+		Snow = 0xEFB6EFF6,
+		Misty = 0x5974E8E5,
+		Sunny = 0x614A1F91,
+		HighPressure = 0xF5A87B65,
+		Clearing = 0x6DB1A50D,
+		Sleet = 0xCA71D7C,
+		Drizzle = 0x995C7F44,
+		Shower = 0xE72679D5,
+		SnowClearing = 0x641DFC11,
+		OvercastDark = 0x19D4F1D9,
+		Thunderstorm = 0x7C1C4A13,
+		Sandstorm = 0xB17F6111,
+		Hurricane = 0x320D0951,
+		Hail = 0x75A9E268,
+		Whiteout = 0x2B402288,
+		GroundBlizzard = 0x7F622122
 	}
 }

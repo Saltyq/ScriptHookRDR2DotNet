@@ -60,6 +60,7 @@ namespace RDR2
 		#endregion
 
 		#region Configuration
+		public EntityType EntityType => Function.Call<EntityType>(Hash.GET_ENTITY_TYPE, Handle);
 
 		public int LodDistance
 		{

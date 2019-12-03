@@ -81,7 +81,6 @@
     <Compile Include="RDR2\AudioFlag.cs" />
     <Compile Include="RDR2\Blip.cs" />
     <Compile Include="RDR2\BlipColor.cs" />
-    <Compile Include="RDR2\BlipSprite.cs" />
     <Compile Include="RDR2\Camera.cs" />
     <Compile Include="RDR2\CameraShake.cs" />
     <Compile Include="RDR2\Console.cs" />
@@ -145,8 +144,6 @@
     <Compile Include="RDR2\Weapons\WeaponAsset.cs" />
     <Compile Include="RDR2\Weapons\WeaponCollection.cs" />
     <Compile Include="RDR2\Weapons\WeaponComponent.cs" />
-    <Compile Include="RDR2\Weapons\WeaponGroup.cs" />
-    <Compile Include="RDR2\Weapons\WeaponHash.cs" />
     <Compile Include="RDR2\Weapons\WeaponTint.cs" />
     <Compile Include="RDR2\Weather.cs" />
     <Compile Include="RDR2\WindowTitle.cs" />

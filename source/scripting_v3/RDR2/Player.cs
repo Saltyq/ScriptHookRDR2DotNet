@@ -57,33 +57,21 @@ namespace RDR2
 
 		public string Name => Function.Call<string>(Hash.GET_PLAYER_NAME, Handle);
 
-		public int Money
+		public static int Money
 		{
-			get
-			{
-				int stat;
-
-                stat = Game.GenerateHash("CAREER_CASH");
-
-                int result;
-				unsafe
+			get => Function.Call<int>((Hash)0x0C02DABFA3B98176);
+			set {
+				var source = Money;
+				var target = value;
+				if (target < source)
 				{
-					Function.Call(Hash.STAT_ID_GET_INT, stat, &result);
+					Function.Call((Hash)0x466BC8769CF26A7A, source - target);
 				}
-
-				return result;
+				else
+				{
+					Function.Call((Hash)0xBC3422DC91667621, target - source);
+				}
 			}
-			/*set
-			{
-
-                StatIDArgs args;
-                args.BaseId = Game.GenerateHash("CAREER_CASH");
-                args.PermutationId = 0;
-
-                Function.Call(Hash._0x6A0184E904CDF25E, &args, value * 100);
-                Function.Call(Hash._0xBC3422DC91667621, value * 100);
-				
-			}*/ // will fix later
 		}
 
 		public int WantedLevel

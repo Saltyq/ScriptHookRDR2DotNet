@@ -16,7 +16,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EE620BCB-3C8C-4BE8-88F4-924DAAEF304B}</ProjectGuid>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>RDR2DN</RootNamespace>

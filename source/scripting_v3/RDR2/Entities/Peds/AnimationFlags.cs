@@ -1,8 +1,3 @@
-//
-// Copyright (C) 2015 crosire & contributors
-// License: https://github.com/crosire/scripthookvdotnet#license
-//
-
 using System;
 
 namespace RDR2
@@ -11,5 +6,11 @@ namespace RDR2
 	public enum AnimationFlags
 	{
 		None = 0,
+		Loop = 1 << 0,
+		StayInEndFrame = 1 << 1,
+		UpperBodyOnly = 1 << 4,
+		AllowRotation = 1 << 5,
+		CancelableWithMovement = 1 << 7,
+		RagdollOnCollision = 4194304
 	}
 }

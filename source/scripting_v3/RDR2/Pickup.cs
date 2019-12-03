@@ -5,7 +5,6 @@
 
 using RDR2.Math;
 using RDR2.Native;
-using System;
 
 namespace RDR2
 {
@@ -15,7 +14,6 @@ namespace RDR2
 		{
 			Handle = handle;
 		}
-
 
 		public Vector3 Position => Function.Call<Vector3>(Hash.GET_PICKUP_COORDS, Handle);
 

@@ -31,7 +31,7 @@ namespace RDR2
 						return null;
 					}
 
-					weapon = new Weapon(owner, hash);
+					weapon = new Weapon(owner, (WeaponHash)hash);
 					weapons.Add(hash, weapon);
 				}
 
@@ -57,7 +57,7 @@ namespace RDR2
 				}
 				else
 				{
-					var weapon = new Weapon(owner, hash);
+					var weapon = new Weapon(owner, (WeaponHash)hash);
 					weapons.Add(hash, weapon);
 
 					return weapon;
@@ -77,7 +77,7 @@ namespace RDR2
 				}
 				else
 				{
-					var weapon = new Weapon(owner, (uint)hash);
+					var weapon = new Weapon(owner, (WeaponHash)hash);
 					weapons.Add(hash, weapon);
 
 					return weapon;
@@ -99,7 +99,7 @@ namespace RDR2
 		{
 			get
 			{
-				if (Current.Hash == Function.Call<uint>(Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
+				if (Current.Hash == Function.Call<WeaponHash>(Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
 				{
 					return null;
 				}
@@ -139,7 +139,7 @@ namespace RDR2
 		{
 			if (!weapons.TryGetValue(hash, out Weapon weapon))
 			{
-				weapon = new Weapon(owner, hash);
+				weapon = new Weapon(owner, (WeaponHash)hash);
 				weapons.Add(hash, weapon);
 			}
 
@@ -158,14 +158,14 @@ namespace RDR2
 
 		public void Remove(Weapon weapon)
 		{
-			uint hash = weapon.Hash;
+			var hash = weapon.Hash;
 
-			if (weapons.ContainsKey(hash))
+			if (weapons.ContainsKey((uint)hash))
 			{
-				weapons.Remove(hash);
+				weapons.Remove((uint) hash);
 			}
 
-			Remove(weapon.Hash);
+			Remove((uint)weapon.Hash);
 		}
 		public void Remove(uint wHash)
 		{

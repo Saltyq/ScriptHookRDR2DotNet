@@ -33,6 +33,16 @@ namespace RDR2.UI
 		/// </summary>
 		public const float Height = 1080f;
 
+		public static bool IsCinematicModeEnabled
+		{
+			set => Function.Call(Hash.SET_CINEMATIC_BUTTON_ACTIVE, value);
+		}
+
+		public static bool IsCinematicModeActive
+		{
+			set => Function.Call(Hash.SET_CINEMATIC_MODE_ACTIVE, value);
+		}
+
 		/// <summary>
 		/// Gets the actual screen resolution the game is being rendered at
 		/// </summary>

@@ -1,786 +1,264 @@
-//
-// Copyright (C) 2015 crosire & contributors
-// License: https://github.com/crosire/scripthookvdotnet#license
-//
-
 using RDR2.Native;
 
 namespace RDR2
 {
 	public sealed class Weapon
 	{
-		#region Fields
-		readonly Ped owner;
-		readonly int updateFiler;
-		#endregion
+		private Ped Owner { get; }
 
-		internal Weapon()
+		public WeaponHash Hash { get; } = WeaponHash.Unarmed;
+
+		public Weapon()
 		{
-			Hash = Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED");
 		}
-		internal Weapon(Ped owner, uint hash)
+
+		public Weapon(Ped owner, WeaponHash hash)
 		{
-			this.owner = owner;
+			Owner = owner;
 			Hash = hash;
 		}
 
-		public uint Hash
-		{
-			get;
-			private set;
-		}
+		public bool IsPresent => Hash == WeaponHash.Unarmed || Function.Call<bool>(Native.Hash.HAS_PED_GOT_WEAPON, Owner.Handle, (uint)Hash, false, false);
 
-		/*public string Name
-		{
-			get => Game.GetGXTEntry(GetDisplayNameFromHash(Hash));
-		}*/
-
-		/*public string ComponentName(WeaponComponent component)
-		{
-			return Game.GetGXTEntry(GetComponentDisplayNameFromHash(Hash, component));
-		}*/
-
-		public bool IsPresent => Hash == Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED") || Function.Call<bool>(Native.Hash.HAS_PED_GOT_WEAPON, owner.Handle, (uint)Hash, 0, 0);
-
-		public Model Model => new Model((uint)Hash);
-
+		public Model Model => GetModelByHash(Hash);
 
 		public WeaponGroup Group => Function.Call<WeaponGroup>(Native.Hash.GET_WEAPONTYPE_GROUP, (uint)Hash);
 
+		public AmmoType AmmoType => Function.Call<AmmoType>(Native.Hash.GET_PED_AMMO_TYPE_FROM_WEAPON, Owner.Handle, (uint)Hash);
+
 		public int Ammo
 		{
-			get
-			{
-				if (Hash == Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
-				{
-					return 1;
-				}
-
-				if (!IsPresent)
-				{
-					return 0;
-				}
-
-				return Function.Call<int>(Native.Hash.GET_AMMO_IN_PED_WEAPON, owner.Handle, (uint)Hash);
-			}
-			set
-			{
-				if (Hash == Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
-				{
-					return;
-				}
-
-				if (IsPresent)
-				{
-					Function.Call(Native.Hash.SET_PED_AMMO, owner.Handle, (uint)Hash, value);
-				}
-				else
-				{
-					Function.Call(Native.Hash.GIVE_DELAYED_WEAPON_TO_PED, owner.Handle, (uint)Hash, value);
-				}
-			}
+			get => Hash == WeaponHash.Unarmed
+				? 1
+				: Function.Call<int>(Native.Hash.GET_PED_AMMO_BY_TYPE, Owner.Handle, (uint)AmmoType);
+			set => Function.Call(Native.Hash.SET_PED_AMMO_BY_TYPE, Owner.Handle, (uint)AmmoType, value);
 		}
+
 		public int AmmoInClip
 		{
-			get
-			{
-				if (Hash == Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
+			get {
+				if (Hash == WeaponHash.Unarmed)
 				{
 					return 1;
 				}
-
-				if (!IsPresent)
+				var ammo = new OutputArgument();
+				if (Function.Call<bool>(Native.Hash.GET_AMMO_IN_CLIP, Owner.Handle, (uint)Hash, ammo))
 				{
-					return 0;
+					return ammo.GetResult<int>();
 				}
-
-				int ammoInClip;
-				unsafe
-				{
-					Function.Call(Native.Hash.GET_AMMO_IN_CLIP, owner.Handle, (uint)Hash, &ammoInClip);
-				}
-				return ammoInClip;
+				return 0;
 			}
-			set
-			{
-				if (Hash == Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
+			set {
+				if (Hash == WeaponHash.Unarmed)
 				{
 					return;
 				}
-
 				if (IsPresent)
 				{
-					Function.Call(Native.Hash.SET_AMMO_IN_CLIP, owner.Handle, (uint)Hash, value);
+					Function.Call(Native.Hash.SET_AMMO_IN_CLIP, Owner.Handle, (uint)Hash, value);
 				}
 				else
 				{
-					Function.Call(Native.Hash.GIVE_DELAYED_WEAPON_TO_PED, owner.Handle, (uint)Hash, value);
+					Owner.GiveWeapon(Hash, value);
 				}
 			}
 		}
 
 		public int MaxAmmo
 		{
-			get
-			{
-				if (Hash == Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
+			get {
+				if (Hash == WeaponHash.Unarmed || !IsPresent)
 				{
 					return 1;
 				}
 
-				int maxAmmo;
-				unsafe
-				{
-					Function.Call(Native.Hash.GET_MAX_AMMO, owner.Handle, (uint)Hash, &maxAmmo);
-				}
-				return maxAmmo;
-			}
-		}
-		public int MaxAmmoInClip
-		{
-			get
-			{
-				if (Hash == Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED"))
-				{
-					return 1;
-				}
-
-				if (!IsPresent)
-				{
-					return 0;
-				}
-
-				return Function.Call<int>(Native.Hash.GET_MAX_AMMO_IN_CLIP, owner.Handle, (uint)Hash, true);
+				var ammo = new OutputArgument();
+				return Function.Call<bool>(Native.Hash.GET_MAX_AMMO, Owner.Handle, (uint)Hash, ammo) ? ammo.GetResult<int>() : 1;
 			}
 		}
 
-		//public int MaxComponents => GetComponentsFromHash(Hash).Length;
-
+		public int MaxAmmoInClip => Hash == WeaponHash.Unarmed ? 1 : Function.Call<int>(Native.Hash.GET_MAX_AMMO_IN_CLIP);
 
 		public bool InfiniteAmmo
 		{
-			set
-			{
-				if (Function.Call<bool>(Native.Hash.GET_CURRENT_PED_WEAPON, owner.Handle, Function.Call<uint>(Native.Hash.GET_HASH_KEY, "WEAPON_UNARMED"), 1, 0, 0))
-				{
-					return;
-				}
-
-				Function.Call(Native.Hash.SET_PED_INFINITE_AMMO, owner.Handle, value, (uint)Hash);
-			}
+			set => Function.Call(Native.Hash.SET_PED_INFINITE_AMMO, Owner.Handle, (uint)Hash, value);
 		}
 
-		/*public WeaponComponent GetComponent(int index)
+		public void Remove()
 		{
-			if (index >= MaxComponents)
-			{
-				return WeaponComponent.Invalid;
-			}
-
-			return GetComponentsFromHash(Hash)[index];
+			Function.Call(Native.Hash.REMOVE_WEAPON_FROM_PED, Owner.Handle, (uint)Hash, false, false);
 		}
 
-		public void SetComponent(WeaponComponent component, bool on)
+		public static Model GetModelByHash(WeaponHash hash)
 		{
-			if (on)
-			{
-				Function.Call(Native.Hash.GIVE_WEAPON_COMPONENT_TO_PED, owner, (uint)Hash, (uint)component);
-			}
-			else
-			{
-				Function.Call(Native.Hash.REMOVE_WEAPON_COMPONENT_FROM_PED, owner, (uint)Hash, (uint)component);
-			}
+			return new Model(Function.Call<int>((Hash)0x865F36299079FB75, (uint)hash));
 		}
 
-		public bool IsComponentActive(WeaponComponent component)
+		public static implicit operator WeaponHash(Weapon weapon)
 		{
-			return Function.Call<bool>(Native.Hash.HAS_PED_GOT_WEAPON_COMPONENT, owner, (uint)Hash, (uint)component);
-		}*/
-
-		/*public static string GetDisplayNameFromHash(WeaponHash hash)
-		{
-			switch (hash)
-			{
-				case WeaponHash.Pistol:
-					return "WT_PIST";
-				case WeaponHash.CombatPistol:
-					return "WT_PIST_CBT";
-				case WeaponHash.APPistol:
-					return "WT_PIST_AP";
-				case WeaponHash.SMG:
-					return "WT_SMG";
-				case WeaponHash.MicroSMG:
-					return "WT_SMG_MCR";
-				case WeaponHash.AssaultRifle:
-					return "WT_RIFLE_ASL";
-				case WeaponHash.CarbineRifle:
-					return "WT_RIFLE_CBN";
-				case WeaponHash.AdvancedRifle:
-					return "WT_RIFLE_ADV";
-				case WeaponHash.MG:
-					return "WT_MG";
-				case WeaponHash.CombatMG:
-					return "WT_MG_CBT";
-				case WeaponHash.PumpShotgun:
-					return "WT_SG_PMP";
-				case WeaponHash.SawnOffShotgun:
-					return "WT_SG_SOF";
-				case WeaponHash.AssaultShotgun:
-					return "WT_SG_ASL";
-				case WeaponHash.HeavySniper:
-					return "WT_SNIP_HVY";
-				case WeaponHash.SniperRifle:
-					return "WT_SNIP_RIF";
-				case WeaponHash.GrenadeLauncher:
-					return "WT_GL";
-				case WeaponHash.RPG:
-					return "WT_RPG";
-				case WeaponHash.Minigun:
-					return "WT_MINIGUN";
-				case WeaponHash.AssaultSMG:
-					return "WT_SMG_ASL";
-				case WeaponHash.BullpupShotgun:
-					return "WT_SG_BLP";
-				case WeaponHash.Pistol50:
-					return "WT_PIST_50";
-				case WeaponHash.Bottle:
-					return "WT_BOTTLE";
-				case WeaponHash.Gusenberg:
-					return "WT_GUSENBERG";
-				case WeaponHash.SNSPistol:
-					return "WT_SNSPISTOL";
-				case WeaponHash.VintagePistol:
-					return "TT_VPISTOL";
-				case WeaponHash.Dagger:
-					return "WT_DAGGER";
-				case WeaponHash.FlareGun:
-					return "WT_FLAREGUN";
-				case WeaponHash.Musket:
-					return "WT_MUSKET";
-				case WeaponHash.Firework:
-					return "WT_FWRKLNCHR";
-				case WeaponHash.MarksmanRifle:
-					return "WT_HMKRIFLE";
-				case WeaponHash.HeavyShotgun:
-					return "WT_HVYSHOT";
-				case WeaponHash.ProximityMine:
-					return "WT_PRXMINE";
-				case WeaponHash.HomingLauncher:
-					return "WT_HOMLNCH";
-				case WeaponHash.CombatPDW:
-					return "WT_COMBATPDW";
-				case WeaponHash.KnuckleDuster:
-					return "WT_KNUCKLE";
-				case WeaponHash.MarksmanPistol:
-					return "WT_MKPISTOL";
-				case WeaponHash.Machete:
-					return "WT_MACHETE";
-				case WeaponHash.MachinePistol:
-					return "WT_MCHPIST";
-				case WeaponHash.Flashlight:
-					return "WT_FLASHLIGHT";
-				case WeaponHash.DoubleBarrelShotgun:
-					return "WT_DBSHGN";
-				case WeaponHash.CompactRifle:
-					return "WT_CMPRIFLE";
-				case WeaponHash.SwitchBlade:
-					return "WT_SWBLADE";
-				case WeaponHash.Revolver:
-					return "WT_REVOLVER";
-			}
-
-			DlcWeaponData data;
-			for (int i = 0, max = Function.Call<int>(Native.Hash.GET_NUM_DLC_WEAPONS); i < max; i++)
-			{
-				unsafe
-				{
-					if (Function.Call<bool>(Native.Hash.GET_DLC_WEAPON_DATA, i, (int*)(void*)&data))
-					{
-						if (data.Hash == hash)
-						{
-							return data.DisplayName;
-						}
-					}
-				}
-			}
-
-			return "WT_INVALID";
+			return weapon.Hash;
 		}
+	}
 
-		public static string GetComponentDisplayNameFromHash(WeaponHash hash, WeaponComponent component)
-		{
-			if (hash == WeaponHash.KnuckleDuster)
-			{
-				switch (component)
-				{
-					case WeaponComponent.KnuckleVarmodBase:
-						return "WT_KNUCKLE";
-					case WeaponComponent.KnuckleVarmodPimp:
-						return "WCT_KNUCK_02";
-					case WeaponComponent.KnuckleVarmodBallas:
-						return "WCT_KNUCK_BG";
-					case WeaponComponent.KnuckleVarmodDollar:
-						return "WCT_KNUCK_DLR";
-					case WeaponComponent.KnuckleVarmodDiamond:
-						return "WCT_KNUCK_DMD";
-					case WeaponComponent.KnuckleVarmodHate:
-						return "WCT_KNUCK_HT";
-					case WeaponComponent.KnuckleVarmodLove:
-						return "WCT_KNUCK_LV";
-					case WeaponComponent.KnuckleVarmodPlayer:
-						return "WCT_KNUCK_PC";
-					case WeaponComponent.KnuckleVarmodKing:
-						return "WCT_KNUCK_SLG";
-					case WeaponComponent.KnuckleVarmodVagos:
-						return "WCT_KNUCK_VG";
-				}
-			}
-			else
-			{
-				switch (component)
-				{
-					case WeaponComponent.AtRailCover01:
-						return "WCT_RAIL";
-					case WeaponComponent.AtArAfGrip:
-						return "WCT_GRIP";
-					case WeaponComponent.AtPiFlsh:
-						return "WCT_FLASH";
-					case WeaponComponent.AtArFlsh:
-						return "WCT_FLASH";
-					case WeaponComponent.AtScopeMacro:
-						return "WCT_SCOPE_MAC";
-					case WeaponComponent.AtScopeMacro02:
-						return "WCT_SCOPE_MAC";
-					case WeaponComponent.AtScopeSmall:
-						return "WCT_SCOPE_SML";
-					case WeaponComponent.AtScopeSmall02:
-						return "WCT_SCOPE_SML";
-					case WeaponComponent.AtScopeMedium:
-						return "WCT_SCOPE_MED";
-					case WeaponComponent.AtScopeLarge:
-						return "WCT_SCOPE_LRG";
-					case WeaponComponent.AtScopeMax:
-						return "WCT_SCOPE_MAX";
-					case WeaponComponent.AtPiSupp:
-						return "WCT_SUPP";
-					case WeaponComponent.AtArSupp:
-						return "WCT_SUPP";
-					case WeaponComponent.AtArSupp02:
-						return "WCT_SUPP";
-					case WeaponComponent.AtSrSupp:
-						return "WCT_SUPP";
-					case WeaponComponent.PistolClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.PistolClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.CombatPistolClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.CombatPistolClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.APPistolClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.APPistolClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.MicroSMGClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.MicroSMGClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.SMGClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.SMGClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.AssaultRifleClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.AssaultRifleClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.CarbineRifleClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.CarbineRifleClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.AdvancedRifleClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.AdvancedRifleClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.MGClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.MGClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.CombatMGClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.CombatMGClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.AssaultShotgunClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.AssaultShotgunClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.SniperRifleClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.HeavySniperClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.MinigunClip01:
-						return "WCT_CLIP2";
-					case WeaponComponent.AssaultSMGClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.AssaultSMGClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.Pistol50Clip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.Pistol50Clip02:
-						return "WCT_CLIP2";
-					case (WeaponComponent)0x0BAAB157:
-						return "WCT_CLIP1";
-					case (WeaponComponent)0x5AF49386:
-						return "WCT_CLIP1";
-					case (WeaponComponent)0x6CBF371B:
-						return "WCT_CLIP2";
-					case (WeaponComponent)0xCAEBD246:
-						return "WCT_CLIP1";
-					case (WeaponComponent)0xE1C5FFFA:
-						return "WCT_CLIP2";
-					case (WeaponComponent)0xF8955D89:
-						return "WCT_CLIP1";
-					case (WeaponComponent)0x3E7E6956:
-						return "WCT_CLIP2";
-					case WeaponComponent.SNSPistolClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.SNSPistolClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.VintagePistolClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.VintagePistolClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.HeavyShotgunClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.MarksmanRifleClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.HeavyShotgunClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.MarksmanRifleClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.AtScopeLargeFixedZoom:
-						return "WCT_SCOPE_LRG";
-					case WeaponComponent.AtPiSupp02:
-						return "WCT_SUPP";
-					case WeaponComponent.CombatPDWClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.CombatPDWClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.MarksmanPistolClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.MachinePistolClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.MachinePistolClip02:
-						return "WCT_CLIP2";
-					case WeaponComponent.AssaultRifleVarmodLuxe:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.AdvancedRifleVarmodLuxe:
-						return "WCT_VAR_METAL";
-					case WeaponComponent.CarbineRifleVarmodLuxe:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.APPistolVarmodLuxe:
-						return "WCT_VAR_METAL";
-					case WeaponComponent.PistolVarmodLuxe:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.Pistol50VarmodLuxe:
-						return "WCT_VAR_SIL";
-					case WeaponComponent.HeavyPistolVarmodLuxe:
-						return "WCT_VAR_WOOD";
-					case WeaponComponent.SMGVarmodLuxe:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.MicroSMGVarmodLuxe:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.SawnoffShotgunVarmodLuxe:
-						return "WCT_VAR_METAL";
-					case WeaponComponent.SniperRifleVarmodLuxe:
-						return "WCT_VAR_WOOD";
-					case (WeaponComponent)0x161E9241:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.AssaultSMGVarmodLowrider:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.BullpupRifleVarmodLow:
-						return "WCT_VAR_METAL";
-					case WeaponComponent.CombatMGVarmodLowrider:
-						return "WCT_VAR_ETCHM";
-					case WeaponComponent.CombatPistolVarmodLowrider:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.MGVarmodLowrider:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.PumpShotgunVarmodLowrider:
-						return "WCT_VAR_GOLD";
-					case WeaponComponent.SNSPistolVarmodLowrider:
-						return "WCT_VAR_WOOD";
-					case WeaponComponent.SpecialCarbineVarmodLowrider:
-						return "WCT_VAR_ETCHM";
-					case WeaponComponent.SwitchbladeVarmodBase:
-						return "WCT_SB_BASE";
-					case WeaponComponent.SwitchbladeVarmodVar1:
-						return "WCT_SB_VAR1";
-					case WeaponComponent.SwitchbladeVarmodVar2:
-						return "WCT_SB_VAR2";
-					case WeaponComponent.RevolverClip01:
-						return "WCT_CLIP1";
-					case WeaponComponent.RevolverVarmodBoss:
-						return "WCT_REV_VARB";
-					case WeaponComponent.RevolverVarmodGoon:
-						return "WCT_REV_VARG";
-				}
-			}
+	public enum WeaponHash : uint
+	{
+		Unarmed = 0xA2719263,
+		Animal = 0xF9FBAEBE,
+		Alligator = 0xB5C5D8F1,
+		Badger = 0xD872AB0A,
+		Bear = 0x1EC181D9,
+		Beaver = 0x30E5211A,
+		Horse = 0x8BD282A4,
+		Cougar = 0x8D4BE52,
+		Coyote = 0x453467D1,
+		Deer = 0xF4C67A9E,
+		Fox = 0x33B2D208,
+		Muskrat = 0x2D880572,
+		Raccoon = 0x356951B,
+		Snake = 0xD8EFBC17,
+		Wolf = 0x238A339,
+		WolfMedium = 0x88394C06,
+		WolfSmall = 0xC80FDF53,
+		RevolverCattleman = 0x169F59F7,
+		MeleeKnife = 0xDB21AC8C,
+		ShotgunDoublebarrel = 0x6DFA071B,
+		MeleeLantern = 0xF62FB3A3,
+		RepeaterCarbine = 0xF5175BA1,
+		RevolverSchofieldBill = 0x6DFE44AB,
+		RifleBoltactionBill = 0xD853C801,
+		MeleeKnifeBill = 0xCE3C31A4,
+		ShotgunSawedoffCharles = 0xBE8D2666,
+		BowCharles = 0x791BBD2C,
+		MeleeKnifeCharles = 0xB4774D3D,
+		ThrownTomahawk = 0xA5E972D7,
+		RevolverSchofieldDutch = 0xFA4B2D47,
+		RevolverSchofieldDutchDualwield = 0xD44A5A04,
+		MeleeKnifeDutch = 0x2C8DBB17,
+		RevolverCattlemanHosea = 0xA6FE9435,
+		RevolverCattlemanHoseaDualwield = 0x1EAA7376,
+		ShotgunSemiautoHosea = 0xFD9B510B,
+		MeleeKnifeHosea = 0xCACE760E,
+		RevolverDoubleactionJavier = 0x514B39A1,
+		ThrownThrowingKnivesJavier = 0x39B815A2,
+		MeleeKnifeJavier = 0xFA66468E,
+		RevolverCattlemanJohn = 0xC9622757,
+		RepeaterWinchesterJohn = 0xBE76397C,
+		MeleeKnifeJohn = 0x1D7D0737,
+		RevolverCattlemanKieran = 0x8FAE73BB,
+		MeleeKnifeKieran = 0x2F3ECD37,
+		RevolverCattlemanLenny = 0xC9095426,
+		SniperrifleRollingblockLenny = 0x21556EC2,
+		MeleeKnifeLenny = 0x9DD839AE,
+		RevolverDoubleactionMicah = 0x2300C65,
+		RevolverDoubleactionMicahDualwield = 0xD427AD,
+		MeleeKnifeMicah = 0xE9245D38,
+		RevolverCattlemanSadie = 0x49F6BE32,
+		RevolverCattlemanSadieDualwield = 0x8384D5FE,
+		RepeaterCarbineSadie = 0x7BD9C820,
+		ThrownThrowingKnives = 0xD2718D48,
+		MeleeKnifeSadie = 0xAF5EEF08,
+		RevolverCattlemanSean = 0x3EECE288,
+		MeleeKnifeSean = 0x64514239,
+		RevolverSchofieldUncle = 0x99496406,
+		ShotgunDoublebarrelUncle = 0x8BA6AF0A,
+		MeleeKnifeUncle = 0x46E97B10,
+		RevolverDoubleaction = 0x797FBF5,
+		RifleBoltaction = 0x772C8DD6,
+		RevolverSchofield = 0x7BBD1FF6,
+		RifleSpringfield = 0x63F46DE6,
+		RepeaterWinchester = 0xA84762EC,
+		RifleVarmint = 0xDDF7BC1E,
+		PistolVolcanic = 0x20D13FF,
+		ShotgunSawedoff = 0x1765A8F8,
+		PistolSemiauto = 0x657065D6,
+		PistolMauser = 0x8580C63E,
+		RepeaterHenry = 0x95B24592,
+		ShotgunPump = 0x31B7B9FE,
+		Bow = 0x88A8505C,
+		ThrownMolotov = 0x7067E7A7,
+		MeleeHatchetHewing = 0x1C02870C,
+		MeleeMachete = 0x28950C71,
+		RevolverDoubleactionExotic = 0x23C706CD,
+		RevolverSchofieldGolden = 0xE195D259,
+		ThrownDynamite = 0xA64DAA5E,
+		MeleeDavyLantern = 0x4A59E501,
+		Lasso = 0x7A8A724A,
+		KitBinoculars = 0xF6687C5A,
+		KitCamera = 0xC3662B7D,
+		Fishingrod = 0xABA87754,
+		SniperrifleRollingblock = 0xE1D2B317,
+		ShotgunSemiauto = 0x6D9BB970,
+		ShotgunRepeating = 0x63CA782A,
+		SniperrifleCarcano = 0x53944780,
+		MeleeBrokenSword = 0xF79190B4,
+		MeleeKnifeBear = 0x2BC12CDA,
+		MeleeKnifeCivilWar = 0xDA54DD53,
+		MeleeKnifeJawbone = 0x1086D041,
+		MeleeKnifeMiner = 0xC45B2DE,
+		MeleeKnifeVampire = 0x14D3F94D,
+		MeleeTorch = 0x67DC3FDE,
+		MeleeLanternElectric = 0x3155643F,
+		MeleeHatchet = 0x9E12A01,
+		MeleeAncientHatchet = 0x21CCCA44,
+		MeleeCleaver = 0xEF32A25D,
+		MeleeHatchetDoubleBit = 0xBCC63763,
+		MeleeHatchetDoubleBitRusted = 0x8F0FDE0E,
+		MeleeHatchetHunter = 0x2A5CF9D6,
+		MeleeHatchetHunterRusted = 0xE470B7AD,
+		MeleeHatchetViking = 0x74DC40ED,
+		RevolverCattlemanMexican = 0x16D655F7,
+		RevolverCattlemanPig = 0xF5E4207F,
+		RevolverSchofieldCalloway = 0x247E783,
+		PistolMauserDrunk = 0x4AAE5FFA,
+		ShotgunDoublebarrelExotic = 0x2250E150,
+		SniperrifleRollingblockExotic = 0x4E328256,
+		ThrownTomahawkAncient = 0x7F23B6C7,
+		MeleeTorchCrowd = 0xCC4588BD,
+		MeleeHatchetMeleeonly = 0x76D4FAB
+	}
 
-			DlcWeaponData data;
-			DlcWeaponComponentData componentData;
-			for (int i = 0, max = Function.Call<int>(Native.Hash.GET_NUM_DLC_WEAPONS); i < max; i++)
-			{
-				unsafe
-				{
-					if (Function.Call<bool>(Native.Hash.GET_DLC_WEAPON_DATA, i, (int*)(void*)&data))
-					{
-						if (data.Hash == hash)
-						{
-							int maxComp = Function.Call<int>(Native.Hash.GET_NUM_DLC_WEAPON_COMPONENTS, i);
+	public enum WeaponGroup : uint
+	{
+		Revolver = 0xBE5B8969,
+		Pistol = 0x18D5FA97,
+		Animal = 0xA00FC1E4,
+		Melee = 0xD49321D4,
+		MeleeThrowable = 0x5C4C5883,
+		Shotgun = 0x33431399,
+		SniperRifle = 0xB7BBD827,
+		Kit = 0xC715F939,
+		Rifle = 0x39D5C192,
+		Bow = 0xB5FD67CD,
+		Lasso = 0x126210C3,
+		Repeater = 0xDC8FB3E9,
+		FishingRod = 0x60B51DA4
+	}
 
-							for (int j = 0; j < maxComp; j++)
-							{
-								if (Function.Call<bool>(Native.Hash.GET_DLC_WEAPON_COMPONENT_DATA, i, j, (int*)(void*)&componentData))
-								{
-									if (componentData.Hash == component)
-									{
-										return componentData.DisplayName;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-			return "WCT_INVALID";
-		}
-
-		public static WeaponComponent[] GetComponentsFromHash(WeaponHash hash)
-		{
-			switch (hash)
-			{
-				case WeaponHash.Pistol:
-					return new[] {
-						WeaponComponent.PistolClip01,
-						WeaponComponent.PistolClip02,
-						WeaponComponent.AtPiFlsh,
-						WeaponComponent.AtPiSupp02,
-						WeaponComponent.PistolVarmodLuxe };
-				case WeaponHash.CombatPistol:
-					return new[] {
-						WeaponComponent.CombatPistolClip01,
-						WeaponComponent.CombatPistolClip02,
-						WeaponComponent.AtPiFlsh,
-						WeaponComponent.AtPiSupp,
-						WeaponComponent.CombatPistolVarmodLowrider };
-				case WeaponHash.APPistol:
-					return new[] {
-						WeaponComponent.APPistolClip01,
-						WeaponComponent.APPistolClip02,
-						WeaponComponent.AtPiFlsh,
-						WeaponComponent.AtPiSupp,
-						WeaponComponent.APPistolVarmodLuxe };
-				case WeaponHash.MicroSMG:
-					return new[] {
-						WeaponComponent.MicroSMGClip01,
-						WeaponComponent.MicroSMGClip02,
-						WeaponComponent.AtPiFlsh,
-						WeaponComponent.AtScopeMacro,
-						WeaponComponent.AtArSupp02,
-						WeaponComponent.MicroSMGVarmodLuxe };
-				case WeaponHash.SMG:
-					return new[] {
-						WeaponComponent.SMGClip01,
-						WeaponComponent.SMGClip02,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtPiSupp,
-						WeaponComponent.AtScopeMacro02,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.SMGVarmodLuxe };
-				case WeaponHash.AssaultRifle:
-					return new[] {
-						WeaponComponent.AssaultRifleClip01,
-						WeaponComponent.AssaultRifleClip02,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeMacro,
-						WeaponComponent.AtArSupp02,
-						WeaponComponent.AssaultRifleVarmodLuxe };
-				case WeaponHash.CarbineRifle:
-					return new[] {
-						WeaponComponent.CarbineRifleClip01,
-						WeaponComponent.CarbineRifleClip02,
-						WeaponComponent.AtRailCover01,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeMedium,
-						WeaponComponent.AtArSupp,
-						WeaponComponent.CarbineRifleVarmodLuxe };
-				case WeaponHash.AdvancedRifle:
-					return new[] {
-						WeaponComponent.AdvancedRifleClip01,
-						WeaponComponent.AdvancedRifleClip02,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeSmall,
-						WeaponComponent.AtArSupp,
-						WeaponComponent.AdvancedRifleVarmodLuxe };
-				case WeaponHash.MG:
-					return new[] {
-						WeaponComponent.MGClip01,
-						WeaponComponent.MGClip02,
-						WeaponComponent.AtScopeSmall02,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.MGVarmodLowrider };
-				case WeaponHash.CombatMG:
-					return new[] {
-						WeaponComponent.CombatMGClip01,
-						WeaponComponent.CombatMGClip02,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.AtScopeMedium,
-						WeaponComponent.CombatMGVarmodLowrider };
-				case WeaponHash.PumpShotgun:
-					return new[] {
-						WeaponComponent.AtSrSupp,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.PumpShotgunVarmodLowrider };
-				case WeaponHash.AssaultShotgun:
-					return new[] {
-						WeaponComponent.AssaultShotgunClip01,
-						WeaponComponent.AssaultShotgunClip02,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtArSupp };
-				case WeaponHash.SniperRifle:
-					return new[] {
-						WeaponComponent.SniperRifleClip01,
-						WeaponComponent.AtScopeLarge,
-						WeaponComponent.AtScopeMax,
-						WeaponComponent.AtArSupp02,
-						WeaponComponent.SniperRifleVarmodLuxe };
-				case WeaponHash.HeavySniper:
-					return new[] {
-						WeaponComponent.HeavySniperClip01,
-						WeaponComponent.AtScopeLarge,
-						WeaponComponent.AtScopeMax };
-				case WeaponHash.GrenadeLauncher:
-					return new[] {
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeSmall };
-				case WeaponHash.Minigun:
-					return new[] {
-						WeaponComponent.MinigunClip01 };
-				case WeaponHash.AssaultSMG:
-					return new[] {
-						WeaponComponent.AssaultSMGClip01,
-						WeaponComponent.AssaultSMGClip02,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeMacro,
-						WeaponComponent.AtArSupp02,
-						WeaponComponent.AssaultSMGVarmodLowrider };
-				case WeaponHash.BullpupShotgun:
-					return new[] {
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtArSupp02 };
-				case WeaponHash.Pistol50:
-					return new[] {
-						WeaponComponent.Pistol50Clip01,
-						WeaponComponent.Pistol50Clip02,
-						WeaponComponent.AtPiFlsh,
-						WeaponComponent.AtArSupp02,
-						WeaponComponent.Pistol50VarmodLuxe };
-				case WeaponHash.CombatPDW:
-					return new[] {
-						WeaponComponent.CombatPDWClip01,
-						WeaponComponent.CombatPDWClip02,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeSmall,
-						WeaponComponent.AtArAfGrip };
-				case WeaponHash.SawnOffShotgun:
-					return new[] {
-						WeaponComponent.SawnoffShotgunVarmodLuxe };
-				case WeaponHash.BullpupRifle:
-					return new[] {
-						WeaponComponent.BullpupRifleClip01,
-						WeaponComponent.BullpupRifleClip02,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeSmall,
-						WeaponComponent.AtArSupp,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.BullpupRifleVarmodLow };
-				case WeaponHash.SNSPistol:
-					return new[] {
-						WeaponComponent.SNSPistolClip01,
-						WeaponComponent.SNSPistolClip02,
-						WeaponComponent.SNSPistolVarmodLowrider };
-				case WeaponHash.SpecialCarbine:
-					return new[] {
-						WeaponComponent.SpecialCarbineClip01,
-						WeaponComponent.SpecialCarbineClip02,
-						WeaponComponent.AtArFlsh,
-						WeaponComponent.AtScopeMedium,
-						WeaponComponent.AtArSupp02,
-						WeaponComponent.AtArAfGrip,
-						WeaponComponent.SpecialCarbineVarmodLowrider };
-				case WeaponHash.KnuckleDuster:
-					return new[] {
-						WeaponComponent.KnuckleVarmodPimp,
-						WeaponComponent.KnuckleVarmodBallas,
-						WeaponComponent.KnuckleVarmodDollar,
-						WeaponComponent.KnuckleVarmodDiamond,
-						WeaponComponent.KnuckleVarmodHate,
-						WeaponComponent.KnuckleVarmodLove,
-						WeaponComponent.KnuckleVarmodPlayer,
-						WeaponComponent.KnuckleVarmodKing,
-						WeaponComponent.KnuckleVarmodVagos };
-				case WeaponHash.MachinePistol:
-					return new[] {
-						WeaponComponent.MachinePistolClip01,
-						WeaponComponent.MachinePistolClip02,
-						WeaponComponent.AtPiSupp };
-				case WeaponHash.SwitchBlade:
-					return new[] {
-						WeaponComponent.SwitchbladeVarmodVar1,
-						WeaponComponent.SwitchbladeVarmodVar2 };
-				case WeaponHash.Revolver:
-					return new[] {
-						WeaponComponent.RevolverClip01,
-						WeaponComponent.RevolverVarmodBoss,
-						WeaponComponent.RevolverVarmodGoon };
-			}
-
-			DlcWeaponData data;
-			DlcWeaponComponentData componentData;
-			for (int i = 0, max = Function.Call<int>(Native.Hash.GET_NUM_DLC_WEAPONS); i < max; i++)
-			{
-				unsafe
-				{
-					if (Function.Call<bool>(Native.Hash.GET_DLC_WEAPON_DATA, i, (int*)(void*)&data))
-					{
-						if (data.Hash == hash)
-						{
-							int maxComp = Function.Call<int>(Native.Hash.GET_NUM_DLC_WEAPON_COMPONENTS, i);
-							WeaponComponent[] components = new WeaponComponent[maxComp];
-
-							for (int j = 0; j < maxComp; j++)
-							{
-								if (Function.Call<bool>(Native.Hash.GET_DLC_WEAPON_COMPONENT_DATA, i, j, (int*)(void*)&componentData))
-								{
-									components[j] = (WeaponComponent)componentData.Hash;
-								}
-								else
-								{
-									components[j] = WeaponComponent.Invalid;
-								}
-							}
-						}
-					}
-				}
-			}
-
-			return new WeaponComponent[0];
-		}*/
+	public enum AmmoType : uint
+	{
+		Unusable = 0x0,
+		Revolver = 0x64356159,
+		Pistol = 0x743D4F54,
+		HatchetThrowable = 0x194631D6,
+		Shotgun = 0x90083D3B,
+		HatchetHewingThrowable = 0x8507C1F7,
+		SniperRifle = 0xD05319F,
+		HatchetAncientThrowable = 0xA9708E57,
+		HatchetHunterThrowable = 0x1AA32EB0,
+		JavierThrowingKnives = 0xF51D1AC7,
+		Molotov = 0x5633F9D5,
+		HatchetVikingThrowable = 0xE501537B,
+		Bow = 0x38E6F55F,
+		Lasso = 0xEAD00129,
+		Repeater = 0xB0B80B9A,
+		AncientTomahawk = 0xF25D45BC,
+		HatchetDoubleBitRustedThrowable = 0xCABE0C0F,
+		Tomahawk = 0x49A985D7,
+		Dynamite = 0x1C9D6E9D,
+		HatchetDoubleBitThrowable = 0x63A5047F,
+		ThrowingKnives = 0x9E4AD291,
+		RifleVarmint = 0x7DF4D025,
+		HatchedHunterRustedThrowable = 0xBEDC8EB6,
+		CleaverThrowable = 0xB925EC32
 	}
 }

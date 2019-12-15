@@ -94,7 +94,6 @@
     <Compile Include="RDR2\Entities\Peds\FiringPattern.cs" />
     <Compile Include="RDR2\Entities\Peds\FormationType.cs" />
     <Compile Include="RDR2\Entities\Peds\Gender.cs" />
-    <Compile Include="RDR2\Entities\Peds\LeaveVehicleFlags.cs" />
     <Compile Include="RDR2\Entities\Peds\Ped.cs" />
     <Compile Include="RDR2\Entities\Peds\PedGroup.cs" />
     <Compile Include="RDR2\Entities\Peds\PedHash.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="RDR2\Entities\Peds\RelationshipGroup.cs" />
     <Compile Include="RDR2\Entities\Peds\Tasks.cs" />
     <Compile Include="RDR2\Entities\Peds\TaskSequence.cs" />
+    <Compile Include="RDR2\Entities\Peds\VehicleFlags.cs" />
     <Compile Include="RDR2\Entities\Prop.cs" />
     <Compile Include="RDR2\Entities\Vehicles\Vehicle.cs" />
     <Compile Include="RDR2\Entities\Vehicles\VehicleClass.cs" />
@@ -131,6 +131,7 @@
     <Compile Include="RDR2\PickupType.cs" />
     <Compile Include="RDR2\Player.cs" />
     <Compile Include="RDR2\PoolObject.cs" />
+    <Compile Include="RDR2\Prompt.cs" />
     <Compile Include="RDR2\RaycastResult.cs" />
     <Compile Include="RDR2\RequireScript.cs" />
     <Compile Include="RDR2\Rope.cs" />

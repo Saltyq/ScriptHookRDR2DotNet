@@ -6,7 +6,7 @@ namespace RDR2
 {{
 	namespace Native
 	{{
-		public enum class Hash : System::UInt64
+		public enum class Hash : ulong
 		{{
 {0}
 		}};

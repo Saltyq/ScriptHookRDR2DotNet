@@ -1,4 +1,4 @@
-namespace GTA.Native
+namespace RDR2.Native
 {
 	public enum VehicleSeat
 	{

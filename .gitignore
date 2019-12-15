@@ -7,7 +7,6 @@ obj/
 [Rr]elease/
 packages/
 archive/
-sdk/
 
 # Exclude OS generated files
 .DS_Store

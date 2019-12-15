@@ -1,13 +1,9 @@
-//
-// Copyright (C) 2015 crosire & contributors
-// License: https://github.com/crosire/scripthookvdotnet#license
-//
-
 using RDR2.Math;
 using RDR2.Native;
 using System;
 using System.Drawing;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace RDR2
 {
@@ -127,32 +123,39 @@ namespace RDR2
 		#region Entities
 
 
-		/// <summary>
-		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
-		/// </summary>
 		public static Ped[] GetAllPeds()
 		{
-			int[] peds = new int[] { };
-			RDR2DN.NativeMemory.getAllPeds(peds, 150);
-			return Array.ConvertAll(peds, handle => new Ped(handle));
+			int[] peds = new int[1024];
+			int entityCount = RDR2DN.NativeMemory.getAllPeds(peds, 1024);
+			List<Ped> Peds = new List<Ped>();
+			for (int i = 0; i < entityCount; i++)
+				Peds.Add(new Ped(peds[i]));
+
+			return Peds.ToArray();
 		}
-		/// <summary>
-		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
-		/// </summary>
+
 		public static Vehicle[] GetAllVehicles()
 		{
-			int[] vehs = new int[] { };
-			RDR2DN.NativeMemory.getAllVehicles(vehs, 150);
-			return Array.ConvertAll(vehs, handle => new Vehicle(handle));
+			int[] vehs = new int[1024];
+			int entityCount = RDR2DN.NativeMemory.getAllVehicles(vehs, 1024);
+
+			List<Vehicle> Vehs = new List<Vehicle>();
+			for (int i = 0; i < entityCount; i++)
+				Vehs.Add(new Vehicle(vehs[i]));
+
+			return Vehs.ToArray();
 		}
-		/// <summary>
-		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
-		/// </summary>
+
 		public static Prop[] GetAllProps()
 		{
-			int[] objs = new int[] { };
-			RDR2DN.NativeMemory.getAllObjects(objs, 150);
-			return Array.ConvertAll(objs, handle => new Prop(handle));
+			int[] props = new int[1024];
+			int count = RDR2DN.NativeMemory.getAllObjects(props, 1024);
+
+			List<Prop> Prop = new List<Prop>();
+			for (int i = 0; i < count; i++)
+				Prop.Add(new Prop(props[i]));
+
+			return Prop.ToArray();
 		}
 
 

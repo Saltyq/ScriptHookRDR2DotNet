@@ -75,7 +75,7 @@ namespace RDR2
 			set => Function.Call(Hash.SET_GAMEPLAY_CAM_RELATIVE_HEADING, value);
 		}
 
-		public static float Zoom => Function.Call<float>(Hash._GET_GAMEPLAY_CAM_ZOOM);
+		public static float Zoom => Function.Call<float>((Hash)0xB4132CA1B0EE1365);
 		public static float FieldOfView => Function.Call<float>(Hash.GET_GAMEPLAY_CAM_FOV);
 
 		public static bool IsRendering => Function.Call<bool>(Hash.IS_GAMEPLAY_CAM_RENDERING);

@@ -147,9 +147,9 @@ namespace RDR2.UI
 			try
 			{
 				string varString = Function.Call<string>(Hash.CREATE_STRING, 10, "LITERAL_STRING", message);
-				Function.Call(Hash._LOG_SET_CACHED_OBJECTIVE, varString);
-				Function.Call(Hash._LOG_PRINT_CACHED_OBJECTIVE);
-				Function.Call(Hash._LOG_CLEAR_CACHED_OBJECTIVE);
+				Function.Call(Hash._UILOG_SET_CACHED_OBJECTIVE, varString);
+				Function.Call(Hash._UILOG_PRINT_CACHED_OBJECTIVE);
+				Function.Call(Hash._UILOG_CLEAR_CACHED_OBJECTIVE);
 			}
 			catch (Exception ex)
 			{

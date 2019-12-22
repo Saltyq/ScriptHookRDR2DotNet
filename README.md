@@ -20,7 +20,7 @@ The issues page should be primarily used for bug reports and enhancement ideas. 
 Pre-built binaries can be found on the [releases](https://github.com/saltyq/scripthookrdr2dotnet/releases) page.
 
 ## Known Issues
-* None
+* Flashing text when drawing until after console opens
 
 ## Contributing
 

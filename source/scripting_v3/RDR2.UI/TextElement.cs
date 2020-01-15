@@ -279,7 +279,7 @@ namespace RDR2.UI
 
 			Function.Call(Hash.SET_TEXT_SCALE, Scale, Scale);
 			Function.Call(Hash._SET_TEXT_COLOR, Color.R, Color.G, Color.B, Color.A);
-			string varString = Function.Call<string>(Hash.CREATE_STRING, 10, "LITERAL_STRING", _caption);
+			string varString = Function.Call<string>(Hash._CREATE_VAR_STRING, 10, "LITERAL_STRING", _caption);
 			Function.Call(Hash._DISPLAY_TEXT, varString, x, y);
 
 		}

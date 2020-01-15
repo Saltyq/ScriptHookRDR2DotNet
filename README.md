@@ -1,5 +1,4 @@
-Community Script Hook RDR2 .NET
-============================
+## Community Script Hook RDR2 .NET | [![Downloads](https://raster.shields.io/github/downloads/Saltyq/ScriptHookRDR2DotNet/total.svg?style=for-the-badge)](https://github.com/Saltyq/ScriptHookRDR2DotNet/releases)
 
 ###### STILL IN ALPHA STATE, USE HOW YOU WANT TO! EXPECT ERRORS, CRASHES, ETC
 
@@ -19,8 +18,7 @@ The issues page should be primarily used for bug reports and enhancement ideas. 
 
 Pre-built binaries can be found on the [releases](https://github.com/saltyq/scripthookrdr2dotnet/releases) page.
 
-## Known Issues
-* None
+[![issues](https://img.shields.io/github/issues/Saltyq/ScriptHookRDR2DotNet?color=informational&style=for-the-badge)](https://github.com/Saltyq/ScriptHookRDR2DotNet/issues)
 
 ## Contributing
 

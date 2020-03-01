@@ -198,7 +198,7 @@ namespace RDR2
 				}
 			}
 			return (T)closest;
-		}
+		}		
 		/// <summary>
 		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
 		/// </summary>
@@ -233,15 +233,17 @@ namespace RDR2
 			Function.Call((Hash)0x283978A15512B2FE, id, true);
 			return id == 0 ? null : (Ped)Entity.FromHandle(id);
 		}
-		public static Vehicle CreateVehicle(Model model, Vector3 position, float heading = 0f)
+		
+		public static Vehicle CreateVehicle(VehicleHash hash, Vector3 position, float heading = 0f)
 		{
-			if (!model.IsVehicle || !model.Request(1000))
+			var model = new Model((uint)hash);
+			if (!model.Request(4000))
 			{
 				return null;
 			}
-
-			return new Vehicle(Function.Call<int>(Hash.CREATE_VEHICLE, model.Hash, position.X, position.Y, position.Z, heading, true, true, false, false));
+			return new Vehicle(Function.Call<int>(Hash.CREATE_VEHICLE, (uint)hash, position.X, position.Y, position.Z, heading, true, true, false, false));
 		}
+		
 				/// <summary>
 		/// Spawns a <see cref="Prop"/> of the given <see cref="Model"/> at the position specified.
 		/// </summary>

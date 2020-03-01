@@ -38,7 +38,11 @@ namespace RDR2
 		}
 
 		public override void Delete() {
-			Function.Call( Hash.REMOVE_BLIP, Handle );
+			unsafe
+			{
+				int ptr = Handle;
+				Function.Call(Hash.REMOVE_BLIP, &ptr);
+			}
 		}
 
 		public bool Equals( Blip other ) {

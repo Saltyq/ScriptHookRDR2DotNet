@@ -97,7 +97,7 @@ namespace RDR2
 		public int Health
 		{
 			get => Function.Call<int>(Hash.GET_ENTITY_HEALTH, Handle);
-			/*set => Function.Call(Hash.SET_ENTITY_HEALTH, Handle, value);*/ // waiting for named native
+            set => Function.Call(Hash._SET_ENTITY_HEALTH, Handle, value, 0);
 		}
 
 		public virtual int MaxHealth
@@ -437,12 +437,12 @@ namespace RDR2
 		#endregion
 
 		#region Blips
-
-		/*public Blip AddBlip()
+		
+		public Blip AddBlip(BlipType blipType)
 		{
-			return Function.Call<Blip>(Hash.ADD_BLIP_FOR_ENTITY, Handle);
-		}*/ // blips are not done
-
+			return Function.Call<Blip>(Hash._BLIP_ADD_FOR_ENTITY, (uint)blipType, Handle);
+		}
+		
 		public Blip CurrentBlip => Function.Call<Blip>(Hash.GET_BLIP_FROM_ENTITY, Handle);
 
 		#endregion

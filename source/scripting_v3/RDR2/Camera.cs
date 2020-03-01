@@ -12,7 +12,8 @@ namespace RDR2
 	public sealed class Camera : PoolObject, ISpatial
 	{
 		internal static readonly string[] shakeNames = {
-			"HAND_SHAKE",
+			"HAND_SHAKE", "NONE", "SMALL_EXPLOSION_SHAKE", "MEDIUM_EXPLOSION_SHAKE", "LARGE_EXPLOSION_SHAKE",
+			"JOLT_SHAKE", "VIBRATE_SHAKE", "WOBBLY_SHAKE", "DRUNK_SHAKE",
 		};
 
 		public Camera(int handle) : base(handle)

@@ -118,6 +118,10 @@ namespace RDR2
 			var blip = Function.Call<int>((Hash)0x554D9D53F696D002, (uint)type, position.X, position.Y, position.Z);
 			return new Blip(blip);
 		}
+		public static Blip CreateBlip(Vector3 position, BlipType type, float radius)
+		{
+			return new Blip(Function.Call<int>(Hash._BLIP_ADD_FOR_RADIUS, (uint)type, position.X, position.Y, position.Z, radius));
+		}
 		#endregion
 
 		#region Entities
@@ -194,7 +198,7 @@ namespace RDR2
 				}
 			}
 			return (T)closest;
-		}
+		}		
 		/// <summary>
 		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
 		/// </summary>
@@ -248,7 +252,94 @@ namespace RDR2
 			Function.Call((Hash)0x283978A15512B2FE, id, true);
 			return id == 0 ? null : (Ped)Entity.FromHandle(id);
 		}
+		
+		public static Vehicle CreateVehicle(VehicleHash hash, Vector3 position, float heading = 0f)
+		{
+			var model = new Model((uint)hash);
+			if (!model.Request(4000))
+			{
+				return null;
+			}
+			return new Vehicle(Function.Call<int>(Hash.CREATE_VEHICLE, (uint)hash, position.X, position.Y, position.Z, heading, true, true, false, false));
+		}
+		
+				/// <summary>
+		/// Spawns a <see cref="Prop"/> of the given <see cref="Model"/> at the position specified.
+		/// </summary>
+		/// <param name="model">The <see cref="Model"/> of the <see cref="Prop"/>.</param>
+		/// <param name="position">The position to spawn the <see cref="Prop"/> at.</param>
+		/// <param name="dynamic">if set to <c>true</c> the <see cref="Prop"/> will have physics; otherwise, it will be static.</param>
+		/// <param name="placeOnGround">if set to <c>true</c> place the prop on the ground nearest to the <paramref name="position"/>.</param>
+		/// <remarks>returns <c>null</c> if the <see cref="Prop"/> could not be spawned</remarks>
+		public static Prop CreateProp(Model model, Vector3 position, bool dynamic, bool placeOnGround)
+		{
+			if (!model.Request(1000))
+			{
+				return null;
+			}
 
+			if (placeOnGround)
+			{
+				position.Z = GetGroundHeight(position);
+			}
+
+			return new Prop(Function.Call<int>(Hash.CREATE_OBJECT, model.Hash, position.X, position.Y, position.Z, 1, 1, dynamic));
+		}
+		/// <summary>
+		/// Spawns a <see cref="Prop"/> of the given <see cref="Model"/> at the position specified.
+		/// </summary>
+		/// <param name="model">The <see cref="Model"/> of the <see cref="Prop"/>.</param>
+		/// <param name="position">The position to spawn the <see cref="Prop"/> at.</param>
+		/// <param name="rotation">The rotation of the <see cref="Prop"/>.</param>
+		/// <param name="dynamic">if set to <c>true</c> the <see cref="Prop"/> will have physics; otherwise, it will be static.</param>
+		/// <param name="placeOnGround">if set to <c>true</c> place the prop on the ground nearest to the <paramref name="position"/>.</param>
+		/// <remarks>returns <c>null</c> if the <see cref="Prop"/> could not be spawned</remarks>
+		public static Prop CreateProp(Model model, Vector3 position, Vector3 rotation, bool dynamic, bool placeOnGround)
+		{
+			Prop prop = CreateProp(model, position, dynamic, placeOnGround);
+
+			if (prop != null)
+			{
+				prop.Rotation = rotation;
+			}
+
+			return prop;
+		}
+		/// <summary>
+		/// Spawns a <see cref="Prop"/> of the given <see cref="Model"/> at the position specified without any offset.
+		/// </summary>
+		/// <param name="model">The <see cref="Model"/> of the <see cref="Prop"/>.</param>
+		/// <param name="position">The position to spawn the <see cref="Prop"/> at.</param>
+		/// <param name="dynamic">if set to <c>true</c> the <see cref="Prop"/> will have physics; otherwise, it will be static.</param>
+		/// <remarks>returns <c>null</c> if the <see cref="Prop"/> could not be spawned</remarks>
+		public static Prop CreatePropNoOffset(Model model, Vector3 position, bool dynamic)
+		{
+			if (!model.Request(1000))
+			{
+				return null;
+			}
+
+			return new Prop(Function.Call<int>(Hash.CREATE_OBJECT_NO_OFFSET, model.Hash, position.X, position.Y, position.Z, 1, 1, dynamic));
+		}
+		/// <summary>
+		/// Spawns a <see cref="Prop"/> of the given <see cref="Model"/> at the position specified without any offset.
+		/// </summary>
+		/// <param name="model">The <see cref="Model"/> of the <see cref="Prop"/>.</param>
+		/// <param name="position">The position to spawn the <see cref="Prop"/> at.</param>
+		/// <param name="rotation">The rotation of the <see cref="Prop"/>.</param>
+		/// <param name="dynamic">if set to <c>true</c> the <see cref="Prop"/> will have physics; otherwise, it will be static.</param>
+		/// <remarks>returns <c>null</c> if the <see cref="Prop"/> could not be spawned</remarks>
+		public static Prop CreatePropNoOffset(Model model, Vector3 position, Vector3 rotation, bool dynamic)
+		{
+			Prop prop = CreatePropNoOffset(model, position, dynamic);
+
+			if (prop != null)
+			{
+				prop.Rotation = rotation;
+			}
+
+			return prop;
+		}
 		public static Pickup CreatePickup(PickupType type, Vector3 pos)
 		{
 			var handle = Function.Call<int>(Hash.CREATE_PICKUP, (int)type, pos.X, pos.Y, pos.Z, 0f, 0f, 0f, 32770, -1,

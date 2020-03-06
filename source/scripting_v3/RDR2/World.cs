@@ -353,7 +353,37 @@ namespace RDR2
 		{
 			Function.Call(Hash.DRAW_LIGHT_WITH_RANGE, position.X, position.Y, position.Z, color.R, color.G, color.B, range, intensity);
 		}
-
+		
+		/// <summary>
+		/// Draws a marker in the world, this needs to be done on a per frame basis
+		/// </summary>
+		/// <param name="type">The type of marker.</param>
+		/// <param name="pos">The position of the marker.</param>
+		/// <param name="dir">The direction the marker points in.</param>
+		/// <param name="rot">The rotation of the marker.</param>
+		/// <param name="scale">The amount to scale the marker by.</param>
+		/// <param name="color">The color of the marker.</param>
+		/// <param name="bobUpAndDown">if set to <c>true</c> the marker will bob up and down.</param>
+		/// <param name="faceCamera">if set to <c>true</c> the marker will always face the camera, regardless of its rotation.</param>
+		/// <param name="rotateY">if set to <c>true</c> rotates only on the y axis(heading).</param>
+		/// <param name="textueDict">Name of texture dictionary to load the texture from, leave null for no texture in the marker.</param>
+		/// <param name="textureName">Name of texture inside the dictionary to load the texture from, leave null for no texture in the marker.</param>
+		/// <param name="drawOnEntity">if set to <c>true</c> draw on any <see cref="Entity"/> that intersects the marker.</param>
+		public static void DrawMarker(MarkerType type, Vector3 pos, Vector3 dir, Vector3 rot, Vector3 scale, Color color,
+		 bool bobUpAndDown = false, bool faceCamera = false, bool rotateY = false, string textueDict = null, string textureName = null, bool drawOnEntity = false)
+		{
+			if (!string.IsNullOrEmpty(textueDict) && !string.IsNullOrEmpty(textureName))
+			{
+				Function.Call(Hash._DRAW_MARKER, (uint)type, pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z, rot.X, rot.Y, rot.Z, scale.X,
+				 scale.Y, scale.Z, color.R, color.G, color.B, color.A, bobUpAndDown, faceCamera, 2, rotateY, textueDict,
+				 textureName, drawOnEntity);
+			}
+			else
+			{
+				Function.Call(Hash._DRAW_MARKER, (uint)type, pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z, rot.X, rot.Y, rot.Z, scale.X,
+				 scale.Y, scale.Z, color.R, color.G, color.B, color.A, bobUpAndDown, faceCamera, 2, rotateY, 0, 0, drawOnEntity);
+			}
+		}
 		#endregion
 
 		#region Raycasting

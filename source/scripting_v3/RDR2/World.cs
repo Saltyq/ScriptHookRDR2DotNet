@@ -198,25 +198,44 @@ namespace RDR2
 		/// <summary>
 		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
 		/// </summary>
-		public static Ped GetClosestPed(Vector3 position, float radius)
+		public static Ped GetClosestPed(Vector3 position)
 		{
-			int[] peds = new int[] { };
-			RDR2DN.NativeMemory.getAllPeds(peds, 150);
-			Ped[] newPeds = Array.ConvertAll(peds, handle => new Ped(handle));
-			return GetClosest(position, newPeds);
+			int[] peds = new int[1024];
+			int entityCount = RDR2DN.NativeMemory.getAllPeds(peds, 1024);
+
+			List<Ped> Peds = new List<Ped>();
+			for (int i = 0; i < entityCount; i++)
+				Peds.Add(new Ped(peds[i]));
+
+			return GetClosest(position, Peds.ToArray());
 		}
 		/// <summary>
 		/// This method is not fully tested. It uses a straight import from ScriptHookRDR2.dll, and if it is returning 0, then it is *probably* a SHRDR2 issue.
 		/// </summary>
-		public static Vehicle GetClosestVehicle(Vector3 position, float radius)
+		public static Vehicle GetClosestVehicle(Vector3 position)
 		{
-			int[] vehs = new int[] { };
-			RDR2DN.NativeMemory.getAllVehicles(vehs, 150);
-			Vehicle[] newVehs = Array.ConvertAll(vehs, handle => new Vehicle(handle));
-			return GetClosest(position, newVehs);
+			int[] vehs = new int[1024];
+			int entityCount = RDR2DN.NativeMemory.getAllVehicles(vehs, 1024);
 
+			List<Vehicle> Vehs = new List<Vehicle>();
+			for (int i = 0; i < entityCount; i++)
+				Vehs.Add(new Vehicle(vehs[i]));
+
+			return GetClosest(position, Vehs.ToArray());
 		}
 
+				public static Prop GetClosestProp(Vector3 position)
+		{
+			int[] props = new int[1024];
+			int count = RDR2DN.NativeMemory.getAllObjects(props, 1024);
+
+			List<Prop> Prop = new List<Prop>();
+			for (int i = 0; i < count; i++)
+				Prop.Add(new Prop(props[i]));
+
+			return GetClosest(position, Prop.ToArray());
+		}
+		
 		public static Ped CreatePed(PedHash hash, Vector3 position, float heading = 0f, bool isNet = true, bool isMission = true)
 		{
 			var model = new Model(hash);

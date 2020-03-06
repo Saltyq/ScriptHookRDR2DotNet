@@ -108,6 +108,11 @@ namespace RDR2
 
 		public bool IsPlayer => Function.Call<bool>(Hash.IS_PED_A_PLAYER, Handle);
 
+		public void SetPedPromptName(string name)
+		{
+			Function.Call(Hash._SET_PED_PROMPT_NAME, Handle, Function.Call<string>(Hash._CREATE_VAR_STRING, 10, "LITERAL_STRING", name));
+		}
+		
 		public bool GetConfigFlag(int flagID)
 		{
 			return Function.Call<bool>(Hash.GET_PED_CONFIG_FLAG, Handle, flagID, true);

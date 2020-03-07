@@ -5,7 +5,7 @@
 
 namespace RDR2
 {
-	public enum MarkerType
+	public enum MarkerType: uint
 	{
 		Cylinder = 0x94FDAE17,
 		Cube = 0x6EB7D3BB,
@@ -23,6 +23,6 @@ namespace RDR2
 		Num_6 = 0xF9B24FB3,
 		Num_7 = 0x75FEB0E,
 		Num_8 = 0xDD839756,
-		num_9 = 0xE9F6303B,
+		num_9 = 0xE9F6303B
 	}
 }

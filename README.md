@@ -1,3 +1,6 @@
+# THIS PROJECT IS NO LONGER IN DEVELOPMENT AND LIKELY DOES NOT WORK.
+## THERE IS AN IMPROVED, UPDATED FORK OF THIS PROJECT AT https://github.com/Halen84/ScriptHookRDR2DotNet-V2 - A HUGE THANK YOU TO THEM!
+
 ## Community Script Hook RDR2 .NET | [![Downloads](https://raster.shields.io/github/downloads/Saltyq/ScriptHookRDR2DotNet/total.svg?style=for-the-badge)](https://github.com/Saltyq/ScriptHookRDR2DotNet/releases)
 
 ###### STILL IN ALPHA STATE, USE HOW YOU WANT TO! EXPECT ERRORS, CRASHES, ETC
